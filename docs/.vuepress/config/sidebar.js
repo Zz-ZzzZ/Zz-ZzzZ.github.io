@@ -6,6 +6,10 @@ module.exports = [
         text: 'vue-i18n',
         link: '/share/i18n.md',
       },
+      {
+        text: 'TS类型体操',
+        link: '/share/typescript.md',
+      },
     ],
   },
   {
@@ -16,5 +20,5 @@ module.exports = [
         link: '/bug/pdfjs.md',
       },
     ],
-  }
-]
+  },
+];

@@ -4,6 +4,7 @@
 
 ### 分享
 - [基于Vue2-i18n下的文件自动导入和类型推导实践](/share/i18n.md)。
+- [Typescript实用工具泛型类](/share/typescript.md)。
 
 ### 踩坑
 - [pdf.js的babel转化](/bug/pdfjs.md)。  
