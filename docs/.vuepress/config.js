@@ -1,5 +1,6 @@
-const { defaultTheme } = require('@vuepress/theme-default')
-const sidebar = require('./config/sidebar')
+const { defaultTheme } = require('@vuepress/theme-default');
+const sidebar = require('./config/sidebar');
+const navbar = require('./config/navbar');
 
 module.exports = {
   lang: 'zh-CN',
@@ -7,6 +8,7 @@ module.exports = {
   theme: defaultTheme({
     // 侧边栏对象
     // 不同子路径下的页面会使用不同的侧边栏
-    sidebar
+    sidebar,
+    navbar,
   }),
-}
+};
