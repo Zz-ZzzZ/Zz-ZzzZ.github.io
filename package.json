@@ -1,0 +1,23 @@
+{
+  "name": "no-bug-everyday",
+  "version": "1.0.0",
+  "description": "### 愿天下没有bug",
+  "main": "README.md",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cv-Engineer123/Cv-Engineer123.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cv-Engineer123/Cv-Engineer123.github.io/issues"
+  },
+  "homepage": "https://github.com/Cv-Engineer123/Cv-Engineer123.github.io#readme",
+  "devDependencies": {
+    "vuepress": "^2.0.0-beta.46"
+  }
+}
