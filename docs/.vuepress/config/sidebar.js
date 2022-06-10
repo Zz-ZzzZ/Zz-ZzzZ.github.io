@@ -1,6 +1,7 @@
 module.exports = [
   {
     text: '分享',
+    collapsible: true,
     children: [
       {
         text: 'vue-i18n',
@@ -14,6 +15,7 @@ module.exports = [
   },
   {
     text: '踩坑',
+    collapsible: true,
     children: [
       {
         text: 'pdf.js',
