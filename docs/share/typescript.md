@@ -31,3 +31,17 @@ type ReplaceStr<Str extends string,
   ? `${Prefix}${ReplaceValue}${Suffix}`
   : Str;
 ```
+
+数组反转
+```typescript
+type ReverseArray<T extends unknown[]> = T extends [infer First, ...infer Rest]
+  ? [...ReverseArray<Rest>, First]
+  : T;
+```
+
+将字符串的字符转化为联合类型
+```typescript
+type StringToUnion<Str extends string> = Str extends `${infer First}${infer Rest}`
+  ? First | StringToUnion<Rest>
+  : never;
+```
