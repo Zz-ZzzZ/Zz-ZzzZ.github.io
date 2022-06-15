@@ -4,12 +4,16 @@ module.exports = [
     collapsible: true,
     children: [
       {
-        text: 'vue-i18n',
+        text: 'Vue-i18n',
         link: '/share/i18n.md',
       },
       {
-        text: 'TS类型体操',
+        text: 'Typescript类型体操',
         link: '/share/typescript.md',
+      },
+      {
+        text: 'Typescript的this类型',
+        link: '/share/ts-this.md',
       },
     ],
   },

@@ -1,4 +1,4 @@
-# Typescript中的this类型声明
+# Typescript中function的this类型声明
 
 在开发中，可能经常会用到类似与防抖，节流之类的依靠闭包来实现的一些交互上的优化，而在Vue项目中（例如Vue2），methods、data之类的都是依靠this来调用，在正常的js文件内定义防抖/节流时是这么定义的
 ```javascript
