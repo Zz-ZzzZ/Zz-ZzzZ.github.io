@@ -11,13 +11,13 @@ pdfjs-dist则是pdf.js的模块化实现，这里使用的版本为最新版本2
 
 安装完成后 在组件内导入
 
-```
+```javascript
   import { getDocument } from 'pdfjs-dist';
 ```
 
 在组件中调用
 
-```typescript
+```javascript
   getDocument('url地址');
 ```
 
@@ -39,7 +39,7 @@ You may need an appropriate loader to handle this file type, currently no loader
 
 由于我的开发环境是基于Vue-cli3的环境下搭建，因此在vue.config.js中配置，正常webpack环境下则配置webpack.config.js
 
-```
+```javascript
   chainWebpack: (config) => {
     config.module
       .rule('pdfjs')
