@@ -25,6 +25,10 @@ module.exports = [
         text: 'pdf.js',
         link: '/bug/pdfjs.md',
       },
+      {
+        text: '正则表达式中的/g修饰符',
+        link: '/bug/regExp.md',
+      },
     ],
   },
 ];

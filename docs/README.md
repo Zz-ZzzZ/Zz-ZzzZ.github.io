@@ -9,4 +9,5 @@
 
 ### 踩坑
 - [pdf.js的babel转化](/bug/pdfjs.md)。  
+- [正则表达式（/g）修饰符](/bug/regExp.md)
 
