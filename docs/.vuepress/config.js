@@ -5,6 +5,7 @@ const navbar = require('./config/navbar');
 module.exports = {
   lang: 'zh-CN',
   title: '愿天下没有Bug',
+  head: [['link', { rel: 'icon', href: './image/bug.png' }]],
   theme: defaultTheme({
     sidebar,
     navbar,
