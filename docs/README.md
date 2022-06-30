@@ -1,6 +1,6 @@
-# no-bug-everyday
+# NoBugEveryday
 
-**一个分享日常开发中的踩坑或实践的小博客（基于VuePress构建）**
+**一个分享日常开发中的实践、踩坑、学习笔记的博客**
 
 *** 
 
@@ -21,4 +21,5 @@
 - [Typescript中function的this类型声明](/share/ts-this.md)
 - [pdf.js的babel转化](/bug/pdfjs.md)。  
 - [正则表达式（/g）修饰符](/bug/regExp.md)
+- [学习B站手写Vue3源码的笔记 - Reactivity](/vue/reactivity.md)
 

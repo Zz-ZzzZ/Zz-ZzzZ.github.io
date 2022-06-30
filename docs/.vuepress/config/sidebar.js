@@ -27,4 +27,14 @@ module.exports = [
       },
     ],
   },
+  {
+    text: '笔记',
+    collapsible: true,
+    children: [
+      {
+        text: 'reactivity',
+        link: '/vue/reactivity.md',
+      },
+    ],
+  },
 ];
