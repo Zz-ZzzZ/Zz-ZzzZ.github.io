@@ -8,11 +8,7 @@ module.exports = [
         link: '/share/i18n.md',
       },
       {
-        text: 'Typescript类型体操',
-        link: '/share/typescript.md',
-      },
-      {
-        text: 'Typescript的this类型',
+        text: 'Typescript - this',
         link: '/share/ts-this.md',
       },
     ],
@@ -26,7 +22,7 @@ module.exports = [
         link: '/bug/pdfjs.md',
       },
       {
-        text: '正则表达式中的/g修饰符',
+        text: 'RegExp - /g',
         link: '/bug/regExp.md',
       },
     ],
