@@ -4,11 +4,11 @@ const navbar = require('./config/navbar');
 
 module.exports = {
   lang: 'zh-CN',
-  title: '愿天下没有Bug',
-  head: [['link', { rel: 'icon', href: './image/bug.png' }]],
+  title: 'Cv-Engineer123',
+  head: [['link', { rel: 'icon', href: './image/logo.png' }]],
   theme: defaultTheme({
     sidebar,
     navbar,
-    logo: './image/bug.png',
+    logo: './image/logo.png',
   }),
 };
