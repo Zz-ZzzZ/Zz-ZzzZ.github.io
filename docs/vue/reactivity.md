@@ -27,7 +27,7 @@ const ref2 = ref({ a: 1 });
 
 1. 创建 ref 时，会进行数据类型判断，若为基本数据类型则返回，若为引用类型则会转化为 reactive
 2. ref 使用的是 **get value**/**set value** 形式，在 get 中使用 trackRefValue()收集依赖
-3. 在 set 中在判断新值和旧值不相同后使用 triggerRefValue()触发依赖
+3. 在 set 中在判断新值和旧值 **(两个值均是原始值，不是被转化后的值)** 不相同后使用 triggerRefValue()触发依赖
 
 ---
 
@@ -82,3 +82,18 @@ watch(
 2. 定义 onCleanup 函数，onCleanup 有一个 **fn** 参数，将 onCleanup 作为 callback 的参数传入后，用户执行了 onCleanup 并且传入了 **fn**，onCleanup 将会**保存** fn 并且**再次**触发 watch 时将会调用保存的 fn
 3. 定义 job，job 内部会调用用户传入的 watch 的 callback 并将保存的旧值和重新获取的新值还有定义的 onInvalidate 作为参数传入 callback，并作为 ReactiveEffect 的第二个参数，数据变动时将会触发
 4. 实例化 ReactiveEffect 类，将被包装过后的数据源和 job 传入，并调用 run()方法获取旧值，获取新值则是在 job 内再调一次 run()
+
+---
+
+### toRef/toRefs
+
+```typescript
+const obj = reactive({ name: 'obj' });
+const nameRef = toRef(obj, 'name');
+const { name } = toRefs(obj);
+```
+
+1. 创建 toRef 时，将会实例化 **ObjectRefImpl** 类，**ObjectRefImpl** 类接收原 **reactive** 和对应的属性，**ObjectRefImpl** 类实际的作用是包装一层 **get/set**,
+   get 则访问 reactive 中的属性，set 则对应更改原 reactive 中的属性
+2. 创建 toRefs 时，创建一个 result 变量，根据参数是数组类型还是对象类型进行不同的循环调用 toRef()储存
+3. 实际访问 **nameRef.value** 和 **name.value** 就是访问 **obj.name**
