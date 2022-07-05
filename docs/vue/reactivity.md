@@ -97,3 +97,18 @@ const { name } = toRefs(obj);
    get 则访问 reactive 中的属性，set 则对应更改原 reactive 中的属性
 2. 创建 toRefs 时，创建一个 result 变量，根据参数是数组类型还是对象类型进行不同的循环调用 toRef()储存
 3. 实际访问 **nameRef.value** 和 **name.value** 就是访问 **obj.name**
+
+---
+
+### toRaw
+
+```typescript
+const obj = reactive({
+  name: 'obj'
+})
+const objRaw = toRaw(obj)
+```
+
+1. 在使用toRaw时，会访问参数内的属性__v_raw，若为reactive或readonly的代理对象，则会触发对应的getter，若为一个普通对象，则不会触发getter
+2. 触发了getter后，getter内做了对访问__v_raw属性时的判断，会从缓存的map中取出对应的值并返回
+3. 拿到了返回值后储存在变量raw并做判断，如果不是undefined，代表这是一个reactive或readonly的代理对象，那么递归调用，直到raw是undefined，代表是一个普通对象，返回该普通对象
