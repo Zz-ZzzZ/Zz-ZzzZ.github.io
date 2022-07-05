@@ -11,7 +11,7 @@ const obj = reactive({ name: 'obj' });
 ```
 
 1. 创建 reactive 时，调用一个统一封装好的函数 **createReactiveObject()**
-2. **createReactiveObject()** 内部实现了对 target，也就是 obj 的**Proxy**代理，其中使用了**reactiveMap(weakMap)**来缓存已经存在过的 target
+2. **createReactiveObject()** 内部实现了对 target，也就是 obj 的**Proxy**代理，其中使用了 **reactiveMap(weakMap)** 来缓存已经存在过的 target
 3. 之后在**Proxy**使用了**baseHandlers**内封装好的**get/set**，
    在**get**中使用 **track()** 收集依赖，在**set**中使用 **trigger()** 来触发依赖
 4. **get/set**中都使用了 **Reflect** 这个 Api 对 target 来进行**get/set**
@@ -106,9 +106,9 @@ const { name } = toRefs(obj);
 const obj = reactive({
   name: 'obj'
 })
-const objRaw = toRaw(obj)
+const objRaw = toRaw(obj) // { name: 'obj' }
 ```
 
-1. 在使用toRaw时，会访问参数内的属性__v_raw，若为reactive或readonly的代理对象，则会触发对应的getter，若为一个普通对象，则不会触发getter
-2. 触发了getter后，getter内做了对访问__v_raw属性时的判断，会从缓存的map中取出对应的值并返回
-3. 拿到了返回值后储存在变量raw并做判断，如果不是undefined，代表这是一个reactive或readonly的代理对象，那么递归调用，直到raw是undefined，代表是一个普通对象，返回该普通对象
+1. 在使用toRaw时，会访问参数内的属性 **__v_raw**，若为**reactive**或**readonly**的代理对象，则会触发对应的getter，若为一个普通对象，则不会触发getter
+2. 触发了getter后，getter内做了对访问 **__v_raw**属性时的判断，会从缓存的map中取出对应的值并返回
+3. 拿到了返回值后储存在变量raw并做判断，如果不是undefined，代表这是一个**reactive**或**readonly**的代理对象，那么递归调用，直到raw是undefined，代表是一个普通对象，返回该普通对象
