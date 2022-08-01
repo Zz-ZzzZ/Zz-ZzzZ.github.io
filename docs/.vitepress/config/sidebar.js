@@ -1,8 +1,7 @@
-module.exports = [
+export default [
   {
     text: '分享',
-    collapsible: true,
-    children: [
+    items: [
       {
         text: 'Vue-i18n',
         link: '/share/i18n.md',
@@ -15,8 +14,7 @@ module.exports = [
   },
   {
     text: '踩坑',
-    collapsible: true,
-    children: [
+    items: [
       {
         text: 'pdf.js',
         link: '/bug/pdfjs.md',
@@ -29,8 +27,7 @@ module.exports = [
   },
   {
     text: '笔记',
-    collapsible: true,
-    children: [
+    items: [
       {
         text: 'reactivity',
         link: '/vue/reactivity.md',

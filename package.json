@@ -4,8 +4,9 @@
   "description": "### 愿天下没有bug",
   "main": "README.md",
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:dev": "vitepress dev docs --host",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/Cv-Engineer123/Cv-Engineer123.github.io#readme",
   "devDependencies": {
-    "vuepress": "^2.0.0-beta.46"
+    "vitepress": "1.0.0-alpha.4",
+    "vue": "^3.2.37"
   }
 }
