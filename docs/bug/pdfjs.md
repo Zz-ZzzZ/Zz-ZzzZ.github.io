@@ -37,7 +37,7 @@ You may need an appropriate loader to handle this file type, currently no loader
 由报错箭头指示可知，webpack无法识别并构建ECMA的新特性（private符号），而这个库的作者竟然不愿意用babel转化
 一遍直接就丢了出来让用户自己解决。因此需要手动为其配置一遍babel
 
-由于我的开发环境是基于Vue-cli3的环境下搭建，因此在vue.config.js中配置，正常webpack环境下则配置webpack.config.js
+由于我的开发环境是基于Vue-cli3的环境下搭建，因此在vue.config.js中配置，正常webpack环境下则配置webpack.config.ts
 
 ```javascript
   chainWebpack: (config) => {

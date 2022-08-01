@@ -2,9 +2,7 @@
 
 ### 学习 B 站手写 Vue3 源码的笔记
 
----
-
-### reactive
+## reactive
 
 ```typescript
 const obj = reactive({ name: 'obj' });
@@ -16,9 +14,8 @@ const obj = reactive({ name: 'obj' });
    在**get**中使用 **track()** 收集依赖，在**set**中使用 **trigger()** 来触发依赖
 4. **get/set**中都使用了 **Reflect** 这个 Api 对 target 来进行**get/set**
 
----
 
-### ref
+## ref
 
 ```typescript
 const ref1 = ref(0);
@@ -29,9 +26,8 @@ const ref2 = ref({ a: 1 });
 2. ref 使用的是 **get value**/**set value** 形式，在 get 中使用 trackRefValue()收集依赖
 3. 在 set 中在判断新值和旧值 **(两个值均是原始值，不是被转化后的值)** 不相同后使用 triggerRefValue()触发依赖
 
----
 
-### computed
+## computed
 
 ```typescript
 const obj = reactive({ name: 'obj' });
@@ -56,9 +52,8 @@ test.value;
 5.  当改变了 obj.name，则会触发 trigger()，trigger()内会寻找有无定义 scheduler，
     而 scheduler 在 obj.name 的 getter 阶段就存好了
 
----
 
-### watch
+## watch
 
 ```typescript
 const obj = reactive({ name: 'obj' });
@@ -83,9 +78,8 @@ watch(
 3. 定义 job，job 内部会调用用户传入的 watch 的 callback 并将保存的旧值和重新获取的新值还有定义的 onInvalidate 作为参数传入 callback，并作为 ReactiveEffect 的第二个参数，数据变动时将会触发
 4. 实例化 ReactiveEffect 类，将被包装过后的数据源和 job 传入，并调用 run()方法获取旧值，获取新值则是在 job 内再调一次 run()
 
----
 
-### toRef/toRefs
+## toRef/toRefs
 
 ```typescript
 const obj = reactive({ name: 'obj' });
@@ -98,9 +92,8 @@ const { name } = toRefs(obj);
 2. 创建 toRefs 时，创建一个 result 变量，根据参数是数组类型还是对象类型进行不同的循环调用 toRef()储存
 3. 实际访问 **nameRef.value** 和 **name.value** 就是访问 **obj.name**
 
----
 
-### toRaw
+## toRaw
 
 ```typescript
 const obj = reactive({
