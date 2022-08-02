@@ -12,7 +12,7 @@ hero:
     alt: image
   actions:
     - theme: brand
-      text: 瞧瞧有些啥
+      text: 欢迎来到米奇妙妙屋
       link: /share/i18n
 
 features:
