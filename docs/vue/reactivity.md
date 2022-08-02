@@ -105,3 +105,14 @@ const objRaw = toRaw(obj) // { name: 'obj' }
 1. 在使用toRaw时，会访问参数内的属性 **__v_raw**，若为**reactive**或**readonly**的代理对象，则会触发对应的getter，若为一个普通对象，则不会触发getter
 2. 触发了getter后，getter内做了对访问 **__v_raw**属性时的判断，会从缓存的map中取出对应的值并返回
 3. 拿到了返回值后储存在变量raw并做判断，如果不是undefined，代表这是一个**reactive**或**readonly**的代理对象，那么递归调用，直到raw是undefined，代表是一个普通对象，返回该普通对象
+
+
+## markRaw
+
+```typescript
+const foo = markRaw({})
+console.log(isReactive(reactive(foo))) // false
+```
+
+1. 函数内部使用了Object.defineProperty()来定义对象的属性，并配置了configurable为true，enumerable为false
+2. 在对象中定义的属性名为__v_skip，值为true，定义此属性后在createReactiveObject阶段该对象就会被直接返回而不进行proxy

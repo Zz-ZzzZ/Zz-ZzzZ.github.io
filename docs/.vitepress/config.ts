@@ -5,7 +5,7 @@ import {defineConfig} from "vitepress";
 export default defineConfig({
   lang: 'zh-CN',
   title: 'Cv-Engineer123',
-  head: [['link', {rel: 'icon', type: 'image/svg+xml', href: '/public/logo.svg'}]],
+  head: [['link', {rel: 'icon', type: 'image/svg+xml', href: '/logo.svg'}]],
   themeConfig: {
     logo: '/logo.svg',
     sidebar,
