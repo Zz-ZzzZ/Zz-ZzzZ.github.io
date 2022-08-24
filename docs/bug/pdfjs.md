@@ -1,4 +1,4 @@
-# pdf.js踩坑分享(基于webpack下的pdfjs-dist库)
+# pdf.js踩坑(基于webpack下的pdfjs-dist库)
 
 最近项目有预览pdf文件的一个需求，目前比较常用的pdf预览库是Mozilla基金会主导的pdf.js,
 pdfjs-dist则是pdf.js的模块化实现，这里使用的版本为最新版本2.14.305，这几个比较新的版本带有typescript类型提示，用的更为方便一些
