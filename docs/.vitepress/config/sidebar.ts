@@ -6,22 +6,27 @@ export default [
         text: 'Vue-i18n',
         link: '/share/i18n.md',
       },
-      {
-        text: 'Typescript - this',
-        link: '/share/ts-this.md',
-      },
+
     ],
   },
   {
     text: '踩坑',
     items: [
       {
-        text: 'pdf.js',
+        text: 'pdf.js的兼容转化',
         link: '/bug/pdfjs.md',
       },
       {
-        text: 'RegExp - /g',
+        text: '正则表达式/g修饰符',
         link: '/bug/regExp.md',
+      },
+      {
+        text: 'node-sass安装',
+        link: '/bug/nodeSass.md'
+      },
+      {
+        text: 'Typescript中的this声明',
+        link: '/bug/ts-this.md',
       },
     ],
   },
