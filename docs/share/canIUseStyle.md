@@ -70,7 +70,7 @@ class CanIUseStyle {
         return false;
     }
 
-    canIUseStyleValue(styleName: CSSProperty, value: any) {
+    canIUseStyleValue(styleName: CSSProperty, value: unknown) {
         if (!this.canIUseStyleName(styleName)) {
             return false;
         }
