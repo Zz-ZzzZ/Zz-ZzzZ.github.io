@@ -6,7 +6,10 @@ export default [
         text: 'Vue-i18n',
         link: '/share/i18n.md',
       },
-
+      {
+        text: 'Vue-inheritAttrs',
+        link: '/share/inheritAttrs.md'
+      }
     ],
   },
   {
