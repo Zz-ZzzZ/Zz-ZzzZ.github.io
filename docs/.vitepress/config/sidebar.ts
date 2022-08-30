@@ -9,6 +9,10 @@ export default [
       {
         text: 'Vue-inheritAttrs',
         link: '/share/inheritAttrs.md'
+      },
+      {
+        text: 'CanIUseStyle',
+        link: '/share/canIUseStyle.md'
       }
     ],
   },
