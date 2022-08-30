@@ -48,7 +48,7 @@ const isStyleValueSupport = (styleName: string, value: any) => {
 
 ## 改进
 
-根据这两个方法，我做了一次统一封装，并且使styleName的类型提示更完整
+根据这两个工具函数，我做了一次统一封装，并且使styleName的类型提示更完整
 
 ```typescript
 type CSSProperty = keyof CSSStyleDeclaration
