@@ -82,8 +82,35 @@ export default {
 </style>
 ```
 
-这样在使用组件时，对于传入未定义Props的组件属性时，就会传到el-dialog中，
-直接按照el-dialog文档的Props或Event来传入对应属性，就达到了不用声明相同的Props的麻烦
+这样在使用组件时，对于传入未定义Props的组件属性时，就会传到ElDialogWrapper.vue的$attrs中，
+直接按照el-dialog文档的Props或Event来传入对应属性，就等于传给了el-dialog，达到了不用声明相同的Props的麻烦
+
+如果希望只取部分Props传递时也可从$attrs中取部分出来，一般用于多个组件都使用了$attrs
+
+```vue
+<template>
+  <el-dialog v-bind="dialogConfig" v-on="$listeners"></el-dialog>
+</template>
+
+<script>
+export default {
+  name: "ElDialogWrapper",
+  inheritAttrs: false,
+  computed: {
+    dialogConfig({$attrs}) {
+      const { title } = $attrs 
+      return {
+        title
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+```
 
 ## 注意
 

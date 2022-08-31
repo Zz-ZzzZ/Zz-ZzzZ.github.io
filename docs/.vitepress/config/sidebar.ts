@@ -13,7 +13,11 @@ export default [
       {
         text: 'CanIUseStyle',
         link: '/share/canIUseStyle.md'
-      }
+      },
+      {
+        text: 'Vue-definePropType',
+        link: '/share/props.md'
+      },
     ],
   },
   {
