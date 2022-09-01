@@ -2,6 +2,8 @@
 
 ## 起因
 
+**Github上已经有了类似的现成且稳定的库，此为个人分享**
+
 在定义Props时，如果有额外的选项需要定义时，则需要加上以下属性
 
 ```javascript
@@ -17,7 +19,7 @@ export default {
 }
 ```
 
-对于我这种懒狗而言，不太想写，于是对这三个额外选项(default/required/validator)，我各自封装了函数
+这种写法比较麻烦，不太想写，于是对这三个额外选项(default/required/validator)，我各自封装了函数
 
 ## 定义类型
 
