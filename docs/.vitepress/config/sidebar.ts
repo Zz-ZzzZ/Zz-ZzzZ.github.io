@@ -3,20 +3,20 @@ export default [
     text: '分享',
     items: [
       {
-        text: 'Vue-i18n',
+        text: 'i18n(Vue)',
         link: '/share/i18n.md',
       },
       {
-        text: 'Vue-inheritAttrs',
+        text: 'inheritAttrs(Vue)',
         link: '/share/inheritAttrs.md'
+      },
+      {
+        text: 'definePropType(Vue)',
+        link: '/share/props.md'
       },
       {
         text: 'CanIUseStyle',
         link: '/share/canIUseStyle.md'
-      },
-      {
-        text: 'Vue-definePropType',
-        link: '/share/props.md'
       },
     ],
   },
