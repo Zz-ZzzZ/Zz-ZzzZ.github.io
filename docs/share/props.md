@@ -42,15 +42,14 @@ export const propTypeDefault = {
     array: () => [],
     object: () => ({}),
     function: () => {},
-    symbol: Symbol
+    symbol: Symbol()
 }
 
 // 取出key可以做到更好的类型提示
 export type PropTypes = keyof typeof propTypeConstructor
 
 export type PropTypeOption = {
-    type: PropTypes,
-    default?: any,
+    default?: unknown,
     required?: boolean | undefined,
     validator?: Function
 }
@@ -62,7 +61,7 @@ export type PropTypeOption = {
 而在Vue文件中如果未指定lang = 'ts'的情况下也只是一个小提示
 
 ```typescript
-const defineType = (type: PropTypes) => {
+const definePropFactory = (type: PropTypes, option: PropTypeOption) => {
     const t = propTypeConstructor[type]
 
     if (!t) {
@@ -70,46 +69,24 @@ const defineType = (type: PropTypes) => {
         return
     }
 
-    return t
+    return {type: t, ...option}
 }
 ```
 
 ## 定义封装的函数
 
 ```typescript
+import {PropTypes, PropTypeOption, propTypeConstructor, propTypeDefault} from './config'
 
-export const definePropDefault = (type: PropTypes, defaultValue?: PropTypeOption['default']) => ({
-    type: defineType(type),
+export const definePropDefault = (type: PropTypes, defaultValue?: PropTypeOption['default']) => definePropFactory(type, {
     default: defaultValue ?? propTypeDefault[type]
 })
 
-export const definePropRequired = (type: PropTypes, required: PropTypeOption['required']) => ({
-    type: defineType(type),
+export const definePropRequired = (type: PropTypes, required: PropTypeOption['required']) => definePropFactory(type, {
     required: !!required
 })
 
-export const definePropValidator = (type: PropTypes, validator: PropTypeOption['validator']) => ({
-    type: defineType(type),
-    validator
-})
-
-```
-
-## 定义封装的函数
-
-```typescript
-export const definePropDefault = (type: PropTypes, defaultValue?: PropTypeOption['default']) => ({
-    type: defineType(type),
-    default: defaultValue ?? propTypeDefault[type]
-})
-
-export const definePropRequired = (type: PropTypes, required: PropTypeOption['required']) => ({
-    type: defineType(type),
-    required: !!required
-})
-
-export const definePropValidator = (type: PropTypes, validator: PropTypeOption['validator']) => ({
-    type: defineType(type),
+export const definePropValidator = (type: PropTypes, validator: PropTypeOption['validator']) => definePropFactory(type, {
     validator
 })
 ```
