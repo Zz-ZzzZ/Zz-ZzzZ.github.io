@@ -1,18 +1,18 @@
 ---
 layout: home
 
-title: 一个小博客 🪁
+title: 米奇妙妙屋 🪁
 titleTemplate: Cv-Engineer123
 
 hero:
-  name: 一个小博客 🪁
+  name: 米奇妙妙屋 🪁
   tagline: 分享日常开发中的实践、踩坑、学习笔记 💪
   image:
     src: /logo.svg
     alt: image
   actions:
     - theme: brand
-      text: 欢迎来到米奇妙妙屋
+      text: 进来坐坐吧
       link: /share/i18n
 
 features:
@@ -24,5 +24,5 @@ features:
     details: 记录一下开发中的踩坑，愿天下再无bug
   - icon: 😬
     title: 笔记
-    details: 这里会放一些学习源码的一些笔记或个人理解
+    details: 这里会放一些学习源码的一些笔记
 ---

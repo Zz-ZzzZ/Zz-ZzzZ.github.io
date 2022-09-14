@@ -46,7 +46,11 @@ export default [
     items: [
       {
         text: 'reactivity',
-        link: '/vue/reactivity.md',
+        link: '/code/reactivity.md',
+      },
+      {
+        text: 'vuex-persistedstate',
+        link: '/code/vuex-persistedstate.md',
       },
     ],
   },
