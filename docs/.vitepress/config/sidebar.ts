@@ -52,6 +52,10 @@ export default [
         text: 'vuex-persistedstate',
         link: '/code/vuex-persistedstate.md',
       },
+      {
+        text: 'vue-cli-service',
+        link: '/code/vue-cli-service.md'
+      }
     ],
   },
 ];
