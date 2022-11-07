@@ -1,19 +1,22 @@
 # vue-cli-service 源码阅读笔记
 
+一直对vue-cli-service如何启动比较感兴趣，这个包的源码阅读起来也比较容易，边按照官方文档边debug基本能看明白(version:
+vue-cli v4)
+
 ## vue-cli-service.js
 
 使用semver.js库来匹配当前操作系统的node版本是否大于vue-cli-service所要求的最低node版本（最低为node v8）
 
 ```javascript
 const requiredVersion = require('../package.json').engines.node
-const { semver, error } = require('@vue/cli-shared-utils')
+const {semver, error} = require('@vue/cli-shared-utils')
 
-if (!semver.satisfies(process.version, requiredVersion, { includePrerelease: true })) {
-  error(
-    `You are using Node ${process.version}, but vue-cli-service ` +
-    `requires Node ${requiredVersion}.\nPlease upgrade your Node version.`
-  )
-  process.exit(1)
+if (!semver.satisfies(process.version, requiredVersion, {includePrerelease: true})) {
+    error(
+        `You are using Node ${process.version}, but vue-cli-service ` +
+        `requires Node ${requiredVersion}.\nPlease upgrade your Node version.`
+    )
+    process.exit(1)
 }
 ```
 
@@ -35,20 +38,20 @@ const rawArgv = process.argv.slice(2)
 
 ```javascript
 const args = require('minimist')(rawArgv, {
-  boolean: [
-    // build
-    'modern',
-    'report',
-    'report-json',
-    'inline-vue',
-    'watch',
-    // serve
-    'open',
-    'copy',
-    'https',
-    // inspect
-    'verbose'
-  ]
+    boolean: [
+        // build
+        'modern',
+        'report',
+        'report-json',
+        'inline-vue',
+        'watch',
+        // serve
+        'open',
+        'copy',
+        'https',
+        // inspect
+        'verbose'
+    ]
 })
 
 ```
@@ -63,8 +66,8 @@ const command = args._[0]
 
 ```javascript
 service.run(command, args, rawArgv).catch(err => {
-  error(err)
-  process.exit(1)
+    error(err)
+    process.exit(1)
 })
 ```
 
@@ -73,8 +76,8 @@ service.run(command, args, rawArgv).catch(err => {
 在上面调用vue-cli-service.js时，会实例化Service类，看看Service内初始化做了些什么
 
 ```javascript
-class Service{
-    constructor (context, { plugins, pkg, inlineOptions, useBuiltIn } = {}) {
+class Service {
+    constructor(context, {plugins, pkg, inlineOptions, useBuiltIn} = {}) {
         // 将当前类储存到process.VUE_CLI_SERVICE中
         process.VUE_CLI_SERVICE = this
         // 是否初始化完毕
@@ -102,10 +105,11 @@ class Service{
         // 构建模式合集
         // 将plugins内提供了defaultModes的插件添加到构建模式合集
         // 默认 { serve: development, build: production, inspect: development }
-        this.modes = this.plugins.reduce((modes, { apply: { defaultModes }}) => {
+        this.modes = this.plugins.reduce((modes, {apply: {defaultModes}}) => {
             return Object.assign(modes, defaultModes)
         }, {})
     }
+
     // ...
 }
 ```
@@ -113,23 +117,24 @@ class Service{
 ### resolvePkg()
 
 ```javascript
-const { resolvePkg } = require('@vue/cli-shared-utils')
+const {resolvePkg} = require('@vue/cli-shared-utils')
 
 class Service {
     // ...
-    resolvePkg (inlinePkg, context = this.context) {
+    resolvePkg(inlinePkg, context = this.context) {
         if (inlinePkg) {
             return inlinePkg
         }
 
         const pkg = resolvePkg(context)
-        
+
         if (pkg.vuePlugins && pkg.vuePlugins.resolveFrom) {
             this.pkgContext = path.resolve(context, pkg.vuePlugins.resolveFrom)
             return this.resolvePkg(null, this.pkgContext)
         }
         return pkg
     }
+
     // ...
 }
 
@@ -150,7 +155,7 @@ const readPkg = require('read-pkg')
 exports.resolvePkg = function (context) {
     // 使用existsSync检查是否存在package.json文件
     if (fs.existsSync(path.join(context, 'package.json'))) {
-        return readPkg.sync({ cwd: context })
+        return readPkg.sync({cwd: context})
     }
     return {}
 }
@@ -159,7 +164,8 @@ exports.resolvePkg = function (context) {
 **resolvePkg()内vuePlugins配置引用说明(来自vue-cli文档)**
 
 ::: tip vuePlugins.resolveFrom
-如果出于一些原因你的插件列在了该项目之外的其它 package.json 文件里，你可以在自己项目的 package.json 里设置 vuePlugins.resolveFrom 选项指向包含其它 package.json 的文件夹。
+如果出于一些原因你的插件列在了该项目之外的其它 package.json 文件里，你可以在自己项目的 package.json 里设置
+vuePlugins.resolveFrom 选项指向包含其它 package.json 的文件夹。
 :::
 
 ### resolvePlugins()
@@ -167,7 +173,7 @@ exports.resolvePkg = function (context) {
 ```javascript
 class Service {
     // ...
-    resolvePlugins (inlinePlugins, useBuiltIn) {
+    resolvePlugins(inlinePlugins, useBuiltIn) {
         const idToPlugin = id => ({
             id: id.replace(/^.\//, 'built-in:'),
             apply: require(id)
@@ -201,22 +207,23 @@ class Service {
                         this.pkg.optionalDependencies &&
                         id in this.pkg.optionalDependencies
                     ) {
-                        let apply = () => {}
+                        let apply = () => {
+                        }
                         try {
                             apply = require(id)
                         } catch (e) {
                             warn(`Optional dependency ${id} is not installed.`)
                         }
 
-                        return { id, apply }
+                        return {id, apply}
                     } else {
                         return idToPlugin(id)
                     }
                 })
-      
+
             plugins = builtInPlugins.concat(projectPlugins)
         }
-        
+
         if (this.pkg.vuePlugins && this.pkg.vuePlugins.service) {
             const files = this.pkg.vuePlugins.service
             // service必须是一个数组形式
@@ -231,25 +238,98 @@ class Service {
 
         return plugins
     }
+
     // ...
 }
 ```
 
-创建一个方法idToPlugin()，该方法可将提供的id转化为plugin，如./commands/serve = { id: 'built-in:command/serve', apply: require('./command/serve')}。
+创建一个方法idToPlugin()，该方法可将提供的id转化为plugin，如./commands/serve = { id: 'built-in:command/serve', apply:
+require('./command/serve')}。
 
-接下来会开始转化vue-cli提供的默认插件builtInPlugins，然后判断是否配置了inlinePlugins。
+```javascript
+const idToPlugin = id => ({
+    id: id.replace(/^.\//, 'built-in:'),
+    apply: require(id)
+})
+```
+
+接下来会开始转化vue-cli提供的默认插件builtInPlugins
+
+```javascript
+const builtInPlugins = [
+    './commands/serve',
+    './commands/build',
+    './commands/inspect',
+    './commands/help',
+    // config plugins are order sensitive
+    './config/base',
+    './config/css',
+    './config/prod',
+    './config/app'
+].map(idToPlugin)
+```
+
+然后判断是否配置了inlinePlugins。
+
+```javascript
+if (inlinePlugins) {
+    plugins = useBuiltIn !== false
+        ? builtInPlugins.concat(inlinePlugins)
+        : inlinePlugins
+} else {
+    const projectPlugins = Object.keys(this.pkg.devDependencies || {})
+        .concat(Object.keys(this.pkg.dependencies || {}))
+        .filter(isPlugin)
+        .map(id => {
+            if (
+                this.pkg.optionalDependencies &&
+                id in this.pkg.optionalDependencies
+            ) {
+                let apply = () => {
+                }
+                try {
+                    apply = require(id)
+                } catch (e) {
+                    warn(`Optional dependency ${id} is not installed.`)
+                }
+
+                return {id, apply}
+            } else {
+                return idToPlugin(id)
+            }
+        })
+
+    plugins = builtInPlugins.concat(projectPlugins)
+}
+```
 
 1. 若配置了inlinePlugins并且未配置useBuiltIn为false时则合并inlinePlugins和默认插件builtInPlugins。
 
 2. 若配置了inlinePlugins但配置了useBuiltIn为false时则只使用inlinePlugins
 
 ::: tip useBuiltIn
-当使用 Vue CLI 来构建一个库或是 Web Component 时，推荐给 @vue/babel-preset-app 传入 useBuiltIns: false 选项。这能够确保你的库或是组件不包含不必要的 polyfills。通常来说，打包 polyfills 应当是最终使用你的库的应用的责任。
+当使用 Vue CLI 来构建一个库或是 Web Component 时，推荐给 @vue/babel-preset-app 传入 useBuiltIns: false
+选项。这能够确保你的库或是组件不包含不必要的 polyfills。通常来说，打包 polyfills 应当是最终使用你的库的应用的责任。
 :::
 
-当未配置inlinePlugins时则合并devDependencies和dependencies内符合vue-cli插件(vue-cli-plugin-xxx)命名的插件，若插件名存在于optionalDependencies中则不使用idToPlugin转化
+当未配置inlinePlugins时则合并devDependencies和dependencies内符合vue-cli插件(vue-cli-plugin-xxx)
+命名的插件，若插件名存在于optionalDependencies中则不使用idToPlugin转化
 
 最后会查找有无在vuePlugins中定义service属性并合并
+
+```javascript
+if (this.pkg.vuePlugins && this.pkg.vuePlugins.service) {
+    const files = this.pkg.vuePlugins.service
+    // service必须是一个数组形式
+    if (!Array.isArray(files)) {
+        throw new Error(`Invalid type for option 'vuePlugins.service', expected 'array' but got ${typeof files}.`)
+    }
+    plugins = plugins.concat(files.map(file => ({
+        id: `local:${file}`,
+        apply: loadModule(`./${file}`, this.pkgContext)
+    })))
+}
+```
 
 ::: tip vuePlugins.service
 如果你需要在项目里直接访问插件 API 而不需要创建一个完整的插件，你可以在 package.json 文件中使用 vuePlugins.service 选项：
@@ -262,11 +342,11 @@ class Service {
 ```javascript
 class Service {
     // ...
-    async run (name, args = {}, rawArgv = []) {
+    async run(name, args = {}, rawArgv = []) {
         const mode = args.mode || (name === 'build' && args.watch ? 'development' : this.modes[name])
-        
+
         this.setPluginsToSkip(args)
-        
+
         this.init(mode)
 
         args._ = args._ || []
@@ -286,20 +366,26 @@ class Service {
             rawArgv.shift()
         }
         // 执行指令
-        const { fn } = command
+        const {fn} = command
         return fn(args, rawArgv)
     }
+
     // ...
 }
 ```
 
 首先先获取构建模式，这里会从几个方式去获取构建模式
 
+```javascript
+const mode = args.mode || (name === 'build' && args.watch ? 'development' : this.modes[name])
+```
+
 ::: info mode
+
 * 内联传递 即 --mode development/production
 * 属于build模式下但是开启了watch 则指定为development
 * 从初始化的默认构建模式配置中(即this.modes)获取
-:::
+  :::
 
 然后配置不需要在初始化前就被调用的插件，之后开始初始化配置选项setPluginsToSkip()
 
@@ -310,7 +396,7 @@ class Service {
 ```javascript
 class Service {
     // ...
-    init (mode = process.env.VUE_CLI_MODE) {
+    init(mode = process.env.VUE_CLI_MODE) {
         // 判断是否已完成初始化
         if (this.initialized) {
             return
@@ -348,6 +434,7 @@ class Service {
             this.webpackRawConfigFns.push(this.projectOptions.configureWebpack)
         }
     }
+
     // ...
 }
 ```
@@ -370,16 +457,16 @@ class Service {
 ### loadEnv()
 
 ```javascript
-class Service{
+class Service {
     // ...
-    loadEnv (mode) {
+    loadEnv(mode) {
         const logger = debug('vue:env')
         const basePath = path.resolve(this.context, `.env${mode ? `.${mode}` : ``}`)
         const localPath = `${basePath}.local`
 
         const load = envPath => {
             try {
-                const env = dotenv.config({ path: envPath, debug: process.env.DEBUG })
+                const env = dotenv.config({path: envPath, debug: process.env.DEBUG})
                 dotenvExpand(env)
                 logger(envPath, env)
             } catch (err) {
@@ -417,9 +504,384 @@ class Service{
             }
         }
     }
+
     // ...
 }
 ```
 
-首先根据项目路径(this.context)拼接.env字符串储存在basePath中，在basePath的基础上再额外拼接.local储存在localPath中，
-然后分别使用dotenv和dotenv-expand库加载到process中，最后根据条件决定是否设置NODE_ENV/BABEL_ENV
+首先根据项目路径(this.context)拼接.env字符串储存在basePath中，在basePath的基础上再额外拼接.local储存在localPath中
+
+```javascript
+const basePath = path.resolve(this.context, `.env${mode ? `.${mode}` : ``}`)
+const localPath = `${basePath}.local`
+```
+
+然后分别使用dotenv和dotenv-expand库加载到process中，最后根据条件决定是否设置NODE_ENV/BABEL_ENV，所以一般环境变量配置文件不需要额外配置NODE_ENV/BABEL_ENV，
+vue-cli-service会自动配置一个默认项。
+
+```javascript
+ if (mode) {
+    // always set NODE_ENV during tests
+    // as that is necessary for tests to not be affected by each other
+    const shouldForceDefaultEnv = (
+        process.env.VUE_CLI_TEST &&
+        !process.env.VUE_CLI_TEST_TESTING_ENV
+    )
+    // 若为production/test下则直接使用该mode值，否则一律使用development
+    const defaultNodeEnv = (mode === 'production' || mode === 'test')
+        ? mode
+        : 'development'
+    // 若配置文件内未定义NODE_ENV则设置默认值
+    if (shouldForceDefaultEnv || process.env.NODE_ENV == null) {
+        process.env.NODE_ENV = defaultNodeEnv
+    }
+    // 若配置文件内未定义BABEL_ENV则设置默认值
+    if (shouldForceDefaultEnv || process.env.BABEL_ENV == null) {
+        process.env.BABEL_ENV = defaultNodeEnv
+    }
+}
+```
+
+## service.loadUserOptions()
+
+本方法用于读取用户配置的vue.config文件或在package.json内配置的"vue"字段并验证配置的正确性
+
+```javascript
+class Service {
+    // ...
+    loadUserOptions() {
+        // vue.config.c?js
+        let fileConfig, pkgConfig, resolved, resolvedFrom
+        const esm = this.pkg.type && this.pkg.type === 'module'
+
+        const possibleConfigPaths = [
+            process.env.VUE_CLI_SERVICE_CONFIG_PATH,
+            './vue.config.js',
+            './vue.config.cjs'
+        ]
+
+        let fileConfigPath
+        for (const p of possibleConfigPaths) {
+            const resolvedPath = p && path.resolve(this.context, p)
+            if (resolvedPath && fs.existsSync(resolvedPath)) {
+                fileConfigPath = resolvedPath
+                break
+            }
+        }
+
+        if (fileConfigPath) {
+            if (esm && fileConfigPath === './vue.config.js') {
+                throw new Error(`Please rename ${chalk.bold('vue.config.js')} to ${chalk.bold('vue.config.cjs')} when ECMAScript modules is enabled`)
+            }
+
+            try {
+                fileConfig = loadModule(fileConfigPath, this.context)
+
+                if (typeof fileConfig === 'function') {
+                    fileConfig = fileConfig()
+                }
+
+                if (!fileConfig || typeof fileConfig !== 'object') {
+                    // TODO: show throw an Error here, to be fixed in v5
+                    error(
+                        `Error loading ${chalk.bold(fileConfigPath)}: should export an object or a function that returns object.`
+                    )
+                    fileConfig = null
+                }
+            } catch (e) {
+                error(`Error loading ${chalk.bold(fileConfigPath)}:`)
+                throw e
+            }
+        }
+
+        // package.vue
+        pkgConfig = this.pkg.vue
+        if (pkgConfig && typeof pkgConfig !== 'object') {
+            error(
+                `Error loading vue-cli config in ${chalk.bold(`package.json`)}: ` +
+                `the "vue" field should be an object.`
+            )
+            pkgConfig = null
+        }
+
+        if (fileConfig) {
+            if (pkgConfig) {
+                warn(
+                    `"vue" field in package.json ignored ` +
+                    `due to presence of ${chalk.bold('vue.config.js')}.`
+                )
+                warn(
+                    `You should migrate it into ${chalk.bold('vue.config.js')} ` +
+                    `and remove it from package.json.`
+                )
+            }
+            resolved = fileConfig
+            resolvedFrom = 'vue.config.js'
+        } else if (pkgConfig) {
+            resolved = pkgConfig
+            resolvedFrom = '"vue" field in package.json'
+        } else {
+            resolved = this.inlineOptions || {}
+            resolvedFrom = 'inline options'
+        }
+
+        if (resolved.css && typeof resolved.css.modules !== 'undefined') {
+            if (typeof resolved.css.requireModuleExtension !== 'undefined') {
+                warn(
+                    `You have set both "css.modules" and "css.requireModuleExtension" in ${chalk.bold('vue.config.js')}, ` +
+                    `"css.modules" will be ignored in favor of "css.requireModuleExtension".`
+                )
+            } else {
+                warn(
+                    `"css.modules" option in ${chalk.bold('vue.config.js')} ` +
+                    `is deprecated now, please use "css.requireModuleExtension" instead.`
+                )
+                resolved.css.requireModuleExtension = !resolved.css.modules
+            }
+        }
+
+        // normalize some options
+        ensureSlash(resolved, 'publicPath')
+        if (typeof resolved.publicPath === 'string') {
+            resolved.publicPath = resolved.publicPath.replace(/^\.\//, '')
+        }
+        removeSlash(resolved, 'outputDir')
+
+        // validate options
+        validate(resolved, msg => {
+            error(
+                `Invalid options in ${chalk.bold(resolvedFrom)}: ${msg}`
+            )
+        })
+
+        return resolved
+    }
+
+    // ...
+}
+```
+
+定义常量esm获取用户是否在package.json内定义type为module，也就是es module模式
+
+```javascript
+const esm = this.pkg.type && this.pkg.type === 'module'
+```
+
+随后定义了一个可能存在的配置文件路径数组，这里严格限定了文件类型，只支持vue.config.(js/cjs)，
+接下来开始寻找vue.config.(js/cjs)配置文件，若路径正确并且存在此文件则跳出循环
+
+```javascript
+ const possibleConfigPaths = [
+    process.env.VUE_CLI_SERVICE_CONFIG_PATH,
+    './vue.config.js',
+    './vue.config.cjs'
+]
+
+let fileConfigPath
+for (const p of possibleConfigPaths) {
+    const resolvedPath = p && path.resolve(this.context, p)
+    if (resolvedPath && fs.existsSync(resolvedPath)) {
+        fileConfigPath = resolvedPath
+        break
+    }
+}
+```
+
+当存在此文件时，进行文件的模块规范判断
+
+```javascript
+if (esm && fileConfigPath === './vue.config.js') {
+    throw new Error(`Please rename ${chalk.bold('vue.config.js')} to ${chalk.bold('vue.config.cjs')} when ECMAScript modules is enabled`)
+}
+```
+
+::: warning
+由于vue.config.js仅支持commonjs规范，若用户配置了package.json为es module模式时并且后缀名为.js,
+需要更改vue.config.js后缀名为.cjs 声明该文件是一个commonjs模块
+:::
+
+接下来尝试读取vue.config，有两种形式可使用，若为函数类型则获取它的返回结果，当读取模块失败时，代表模块未正确导出，提醒用户注意文件的导出形式
+
+```javascript
+try {
+    fileConfig = loadModule(fileConfigPath, this.context)
+
+    if (typeof fileConfig === 'function') {
+        fileConfig = fileConfig()
+    }
+
+    if (!fileConfig || typeof fileConfig !== 'object') {
+        // TODO: show throw an Error here, to be fixed in v5
+        error(
+            `Error loading ${chalk.bold(fileConfigPath)}: should export an object or a function that returns object.`
+        )
+        fileConfig = null
+    }
+} catch (e) {
+    error(`Error loading ${chalk.bold(fileConfigPath)}:`)
+    throw e
+}
+```
+
+::: tip vue.config两种配置形式
+Object
+
+```javascript
+module.exports = {
+    // config
+}
+```
+
+Function
+
+```javascript
+module.exports = function () {
+    return {
+        // config
+    }
+}
+```
+
+:::
+
+除了配置vue.config文件以外还可以在package.json内配置字段"vue"来代替vue.config文件。**导出格式必须为对象**，否则提示错误
+
+若同时存在vue.config配置文件和在package.json中配置了vue字段则优先使用配置文件，并抛出警告用户移除package.json内的vue字段
+
+```javascript
+// package.vue
+pkgConfig = this.pkg.vue
+if (pkgConfig && typeof pkgConfig !== 'object') {
+    error(
+        `Error loading vue-cli config in ${chalk.bold(`package.json`)}: ` +
+        `the "vue" field should be an object.`
+    )
+    pkgConfig = null
+}
+
+if (fileConfig) {
+    if (pkgConfig) {
+        warn(
+            `"vue" field in package.json ignored ` +
+            `due to presence of ${chalk.bold('vue.config.js')}.`
+        )
+        warn(
+            `You should migrate it into ${chalk.bold('vue.config.js')} ` +
+            `and remove it from package.json.`
+        )
+    }
+    resolved = fileConfig
+    resolvedFrom = 'vue.config.js'
+} else if (pkgConfig) {
+    resolved = pkgConfig
+    resolvedFrom = '"vue" field in package.json'
+} else {
+    resolved = this.inlineOptions || {}
+    resolvedFrom = 'inline options'
+}
+```
+
+由于vue-cli v3和v4有css相关的api弃用，因此会加一层判断，具体可查阅vue-cli文档
+
+```javascript
+ if (resolved.css && typeof resolved.css.modules !== 'undefined') {
+    if (typeof resolved.css.requireModuleExtension !== 'undefined') {
+        warn(
+            `You have set both "css.modules" and "css.requireModuleExtension" in ${chalk.bold('vue.config.js')}, ` +
+            `"css.modules" will be ignored in favor of "css.requireModuleExtension".`
+        )
+    } else {
+        warn(
+            `"css.modules" option in ${chalk.bold('vue.config.js')} ` +
+            `is deprecated now, please use "css.requireModuleExtension" instead.`
+        )
+        resolved.css.requireModuleExtension = !resolved.css.modules
+    }
+}
+```
+
+接下来会对配置项publicPath/outputDir做一些字符替换
+
+```javascript
+// 为传递的publicPath的路径结尾拼接'/'，如/root => /root/
+ensureSlash(resolved, 'publicPath')
+// 移除publicPath中的'./'字符
+if (typeof resolved.publicPath === 'string') {
+    resolved.publicPath = resolved.publicPath.replace(/\.\//, '')
+}
+// 移除尾部的'/'，如/root/ => /root
+removeSlash(resolved, 'outputDir')
+```
+
+最后使用@hapi/joi.js库对用户配置的文件进行验证，验证规则如下
+
+::: info cli-service/lib/options.js
+
+```javascript
+const schema = createSchema(joi => joi.object({
+    publicPath: joi.string().allow(''),
+    outputDir: joi.string(),
+    assetsDir: joi.string().allow(''),
+    indexPath: joi.string(),
+    filenameHashing: joi.boolean(),
+    runtimeCompiler: joi.boolean(),
+    transpileDependencies: joi.array(),
+    productionSourceMap: joi.boolean(),
+    // 可以为布尔值或数字(整数)
+    parallel: joi.alternatives().try([
+        joi.boolean(),
+        joi.number().integer()
+    ]),
+    devServer: joi.object(),
+    pages: joi.object().pattern(
+        /\w+/,
+        joi.alternatives().try([
+            joi.string().required(),
+            joi.array().items(joi.string().required()),
+
+            joi.object().keys({
+                entry: joi.alternatives().try([
+                    joi.string().required(),
+                    joi.array().items(joi.string().required())
+                ]).required()
+            }).unknown(true)
+        ])
+    ),
+    // 可选则为['', 'anonymous', 'use-credentials']
+    crossorigin: joi.string().valid(['', 'anonymous', 'use-credentials']),
+    integrity: joi.boolean(),
+
+    // css
+    css: joi.object({
+        // TODO: deprecate this after joi 16 release
+        modules: joi.boolean(),
+        requireModuleExtension: joi.boolean(),
+        extract: joi.alternatives().try(joi.boolean(), joi.object()),
+        sourceMap: joi.boolean(),
+        loaderOptions: joi.object({
+            css: joi.object(),
+            sass: joi.object(),
+            scss: joi.object(),
+            less: joi.object(),
+            stylus: joi.object(),
+            postcss: joi.object()
+        })
+    }),
+
+    // webpack
+    chainWebpack: joi.func(),
+    configureWebpack: joi.alternatives().try(
+        joi.object(),
+        joi.func()
+    ),
+
+    // known runtime options for built-in plugins
+    lintOnSave: joi.any().valid([true, false, 'error', 'warning', 'default']),
+    pwa: joi.object(),
+
+    // 3rd party plugin options
+    pluginOptions: joi.object()
+}))
+```
+
+:::
