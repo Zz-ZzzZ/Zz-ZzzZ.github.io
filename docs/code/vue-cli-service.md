@@ -885,3 +885,182 @@ const schema = createSchema(joi => joi.object({
 ```
 
 :::
+
+## service.resolveWebpackConfig()
+
+本方法用于解析并合并用户配置的webpack相关配置
+
+```javascript
+class Service {
+    // ...
+    resolveChainableWebpackConfig() {
+        const chainableConfig = new Config()
+        // apply chains
+        this.webpackChainFns.forEach(fn => fn(chainableConfig))
+        return chainableConfig
+    }
+
+    resolveWebpackConfig(chainableConfig = this.resolveChainableWebpackConfig()) {
+        if (!this.initialized) {
+            throw new Error('Service must call init() before calling resolveWebpackConfig().')
+        }
+        // get raw config
+        let config = chainableConfig.toConfig()
+        const original = config
+        // apply raw config fns
+        this.webpackRawConfigFns.forEach(fn => {
+            if (typeof fn === 'function') {
+                // function with optional return value
+                const res = fn(config)
+                if (res) config = merge(config, res)
+            } else if (fn) {
+                // merge literal values
+                config = merge(config, fn)
+            }
+        })
+
+        // #2206 If config is merged by merge-webpack, it discards the __ruleNames
+        // information injected by webpack-chain. Restore the info so that
+        // vue inspect works properly.
+        if (config !== original) {
+            cloneRuleNames(
+                config.module && config.module.rules,
+                original.module && original.module.rules
+            )
+        }
+
+        // check if the user has manually mutated output.publicPath
+        const target = process.env.VUE_CLI_BUILD_TARGET
+        if (
+            !process.env.VUE_CLI_TEST &&
+            (target && target !== 'app') &&
+            config.output.publicPath !== this.projectOptions.publicPath
+        ) {
+            throw new Error(
+                `Do not modify webpack output.publicPath directly. ` +
+                `Use the "publicPath" option in vue.config.js instead.`
+            )
+        }
+
+        if (
+            !process.env.VUE_CLI_ENTRY_FILES &&
+            typeof config.entry !== 'function'
+        ) {
+            let entryFiles
+            if (typeof config.entry === 'string') {
+                entryFiles = [config.entry]
+            } else if (Array.isArray(config.entry)) {
+                entryFiles = config.entry
+            } else {
+                entryFiles = Object.values(config.entry || []).reduce((allEntries, curr) => {
+                    return allEntries.concat(curr)
+                }, [])
+            }
+
+            entryFiles = entryFiles.map(file => path.resolve(this.context, file))
+            process.env.VUE_CLI_ENTRY_FILES = JSON.stringify(entryFiles)
+        }
+
+        return config
+    }
+
+    // ...
+}
+```
+
+参数chainableConfig默认值是使用方法resolveChainableWebpackConfig，而resolveChainableWebpackConfig的作用是使用webpack-chain初始化链式配置，
+并作为参数传给chainWebpack属性的每一个配置项，然后返回这个链式配置
+
+```javascript
+resolveChainableWebpackConfig()
+{
+    const chainableConfig = new Config()
+    // apply chains
+    this.webpackChainFns.forEach(fn => fn(chainableConfig))
+    return chainableConfig
+}
+```
+
+调用时，会检查Service类有无初始化完毕
+
+```javascript
+if (!this.initialized) {
+    throw new Error('Service must call init() before calling resolveWebpackConfig().')
+}
+```
+
+随后获取webpack-chain的最终配置结果
+
+```javascript
+let config = chainableConfig.toConfig()
+const original = config
+```
+
+configureWebpack支持两种配置方式，一种是使用对象形式，一种是使用函数，但是需要有返回值，最后会被合并
+
+::: tip configureWebpack
+如果这个值是一个函数，则会接收被解析的配置作为参数。该函数既可以修改配置并不返回任何东西，也可以返回一个被克隆或合并过的配置版本。
+:::
+
+```javascript
+this.webpackRawConfigFns.forEach(fn => {
+    if (typeof fn === 'function') {
+        // function with optional return value
+        const res = fn(config)
+        if (res) config = merge(config, res)
+    } else if (fn) {
+        // merge literal values
+        config = merge(config, fn)
+    }
+})
+```
+
+接下来会检查用户有无在configureWebpack或chainWebpack中定义了output.publicPath属性，由于vue-cli需要在其他地方使用到publicPath属性，
+因此必须publicPath属性必须配置在vue.config文件内
+
+```javascript
+ const target = process.env.VUE_CLI_BUILD_TARGET
+if (
+    !process.env.VUE_CLI_TEST &&
+    (target && target !== 'app') &&
+    config.output.publicPath !== this.projectOptions.publicPath
+) {
+    throw new Error(
+        `Do not modify webpack output.publicPath directly. ` +
+        `Use the "publicPath" option in vue.config.js instead.`
+    )
+}
+```
+
+然后根据条件格式化entry选项，最终保存到VUE_CLI_ENTRY_FILES中
+
+::: tip entry支持的格式
+```javascript
+const entry = './main.js'
+const entry = ['./main.js']
+const entry = { 
+    main: './main.js'
+}
+```
+:::
+
+```javascript
+ if (
+    !process.env.VUE_CLI_ENTRY_FILES &&
+    typeof config.entry !== 'function'
+) {
+    let entryFiles
+    if (typeof config.entry === 'string') {
+        entryFiles = [config.entry]
+    } else if (Array.isArray(config.entry)) {
+        entryFiles = config.entry
+    } else {
+        entryFiles = Object.values(config.entry || []).reduce((allEntries, curr) => {
+            return allEntries.concat(curr)
+        }, [])
+    }
+
+    entryFiles = entryFiles.map(file => path.resolve(this.context, file))
+    process.env.VUE_CLI_ENTRY_FILES = JSON.stringify(entryFiles)
+}
+```
