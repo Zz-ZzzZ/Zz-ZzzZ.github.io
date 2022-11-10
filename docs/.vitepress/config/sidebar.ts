@@ -55,6 +55,10 @@ export default [
       {
         text: 'vue-cli-service',
         link: '/code/vue-cli-service.md'
+      },
+      {
+        text: 'vue-clamp',
+        link: '/code/vue-clamp.md'
       }
     ],
   },
