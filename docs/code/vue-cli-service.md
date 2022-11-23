@@ -255,6 +255,8 @@ const idToPlugin = id => ({
 
 接下来会开始转化vue-cli提供的默认插件builtInPlugins
 
+在vue-cli-service中，提供的构建指令和对webpack/loader的配置都是以插件注入的形式来声明)
+
 ```javascript
 const builtInPlugins = [
     './commands/serve',
@@ -269,7 +271,7 @@ const builtInPlugins = [
 ].map(idToPlugin)
 ```
 
-然后判断是否配置了inlinePlugins。
+然后判断是否配置了inlinePlugins，inlinePlugins为构造函数内的参数: plugins
 
 ```javascript
 if (inlinePlugins) {
