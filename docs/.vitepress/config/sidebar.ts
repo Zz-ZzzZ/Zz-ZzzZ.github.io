@@ -39,6 +39,10 @@ export default [
         text: 'Typescript中的this声明',
         link: '/bug/ts-this.md',
       },
+      {
+        text: 'display: inline-block',
+        link: '/bug/inline-block.md'
+      }
     ],
   },
   {
