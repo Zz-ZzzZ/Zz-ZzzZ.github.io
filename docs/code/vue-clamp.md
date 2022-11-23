@@ -3,7 +3,7 @@
 最近业务内有用到该插件，对实现方式比较好奇，因此来阅读一下源码，网上搜到的获取文本行数都是依靠文本行高来获取，这个则用了另外一个方式
 
 ## Clamp.js
-
+一些简单的方法就直接在上面写注释了
 ```javascript
 import {addListener, removeListener} from 'resize-detector'
 
