@@ -1037,13 +1037,15 @@ if (
 然后根据条件格式化entry选项，最终保存到VUE_CLI_ENTRY_FILES中
 
 ::: tip entry支持的格式
+
 ```javascript
 const entry = './main.js'
 const entry = ['./main.js']
-const entry = { 
+const entry = {
     main: './main.js'
 }
 ```
+
 :::
 
 ```javascript
