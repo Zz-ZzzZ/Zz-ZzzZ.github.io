@@ -1,7 +1,6 @@
 # vue-cli-service 源码阅读笔记
 
-一直对vue-cli-service如何启动比较感兴趣，这个包的源码阅读起来也比较容易，边按照官方文档边debug基本能看明白(version:
-vue-cli v4)
+一直对vue-cli-service如何启动比较感兴趣，因此对着官方文档和debug尝试阅读一下(version: vue-cli v4)
 
 ## vue-cli-service.js
 

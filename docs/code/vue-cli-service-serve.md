@@ -225,7 +225,7 @@ const server = new WebpackDevServer(compiler, Object.assign({
 }))
 ```
 
-启动devServer后，注册了两个Nodejs信号事件，用于接收在通过一些方式退出该进程时的信号，如按下ctrl+c时，就会终止进程，具体可参考node文档
+启动devServer后，注册了两个Nodejs信号事件，用于接收在通过一些方式退出该进程时的信号，如按下ctrl+c时，会发送SIGINT信号，cli就会关闭服务并终止进程，具体可参考node文档
 
 ```javascript
 ['SIGINT', 'SIGTERM'].forEach(signal => {
@@ -237,7 +237,7 @@ const server = new WebpackDevServer(compiler, Object.assign({
 })
 ```
 
-:::tip SIGINT与SIGTERM
+:::tip SIGINT与SIGTERM -- 来自node文档
 
 - 'SIGTERM' and 'SIGINT' have default handlers on non-Windows platforms that reset the terminal mode before exiting with
   code 128 + signal number. If one of these signals has a listener installed, its default behavior will be removed (
@@ -245,11 +245,28 @@ const server = new WebpackDevServer(compiler, Object.assign({
 - 'SIGTERM' is not supported on Windows, it can be listened on.
 - 'SIGINT' from the terminal is supported on all platforms, and can usually be generated with Ctrl+C (though this may be
   configurable). It is not generated when terminal raw mode is enabled and Ctrl+C is used.
-  :::
+
+:::
+
+之后注册了stdin的end事件，这里并没有注册readable事件来监听用户的输入，个人认为应该是与某些程序关联时，关联的程序关闭了而cli服务没有关闭
+
+**从PR里找到了添加此段代码的地方 https://github.com/vuejs/vue-cli/issues/1597**
+
+```javascript
+if (args.stdin) {
+  process.stdin.on('end', () => {
+    server.close(() => {
+      process.exit(0)
+    })
+  })
+
+  process.stdin.resume()
+}
+```
 
 ## 注册编译完成事件
 
-最后返回一个Promise，Promise内注册了一个编译完成的事件，用于编译完成后在控制台输出一些提示信息，根据用户是否配置了open选项来开启浏览器
+最后返回一个Promise，Promise内注册了一个编译完成的事件，用于编译完成后在控制台输出一些提示信息，和处理copy，open选项
 
 ```javascript
     return new Promise((resolve, reject) => {
