@@ -67,6 +67,10 @@ export default [
       {
         text: 'vue-clamp',
         link: '/code/vue-clamp.md'
+      },
+      {
+        text: 'vue-demi',
+        link: '/code/vue-demi.md'
       }
     ],
   },
