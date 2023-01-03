@@ -12,7 +12,7 @@ npm script 是 package.json 中定义的一组内置脚本和自定义脚本。�
 ```json
 {
   "scripts":{
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node ./scripts/postinstall.js"
   }
 }
 ```
