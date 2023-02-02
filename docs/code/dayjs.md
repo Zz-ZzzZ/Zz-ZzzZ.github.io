@@ -2,7 +2,7 @@
 
 一个dayjs()就能完成许多繁琐的操作，有点意思
 
-## Function dayjs()
+## dayjs()
 
 ```javascript
 const dayjs = function (date, c) {
@@ -174,3 +174,90 @@ export const REGEX_PARSE = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2}
 ::: tip
 T/t 是日期与时间的分隔符，与空格一样，并无区别
 :::
+
+## dayjs().set()
+
+```javascript
+class Dayjs {
+    // ...
+   $set(units, int) { // private set
+      const unit = Utils.p(units)
+      const utcPad = `set${this.$u ? 'UTC' : ''}`
+      const name = {
+         [C.D]: `${utcPad}Date`,
+         [C.DATE]: `${utcPad}Date`,
+         [C.M]: `${utcPad}Month`,
+         [C.Y]: `${utcPad}FullYear`,
+         [C.H]: `${utcPad}Hours`,
+         [C.MIN]: `${utcPad}Minutes`,
+         [C.S]: `${utcPad}Seconds`,
+         [C.MS]: `${utcPad}Milliseconds`
+      }[unit]
+      const arg = unit === C.D ? this.$D + (int - this.$W) : int
+
+      if (unit === C.M || unit === C.Y) {
+         // clone is for badMutable plugin
+         const date = this.clone().set(C.DATE, 1)
+         date.$d[name](arg)
+         date.init()
+         this.$d = date.set(C.DATE, Math.min(this.$D, date.daysInMonth())).$d
+      } else if (name) this.$d[name](arg)
+
+      this.init()
+      return this
+   }
+
+   set(string, int) {
+      return this.clone().$set(string, int)
+   }
+   // ...
+}
+
+const prettyUnit = (u) => {
+   const special = {
+      M: C.M,
+      y: C.Y,
+      w: C.W,
+      d: C.D,
+      D: C.DATE,
+      h: C.H,
+      m: C.MIN,
+      s: C.S,
+      ms: C.MS,
+      Q: C.Q
+   }
+   return special[u] || String(u || '').toLowerCase().replace(/s$/, '')
+}
+```
+
+根据传入的单位做统一转化，可传入缩写或全称或全称的复数
+
+::: tip
+```javascript
+// 这三种是一样的
+dayjs().set('d', 3)
+dayjs().set('day', 3)
+dayjs().set('days', 3)
+```
+:::
+
+随后根据用户是否为**UTC**模式来定义对应的方法映射，如普通模式传入'd'，则使用setDate，**UTC**下则使用setUTCDate
+
+若用户传入的单位为d（day/days）时则会将传入的值参数int做一遍转化后赋值给arg
+
+::: tip
+假设为
+```javascript
+dayjs('2023-01-10').set('day', 10)
+```
+此时参数int为10，根据代码可得$D为10 + ((int的值为10) - (1月10号为周2所以$W为2)) = 18，也就是设置为18号
+
+直观的理解可以是int = 10 - (一周的天数7) = 1周余三，也就是下一周的周三
+
+只要是在1月10号这一周范围内，不论是1月10号还是1月11号，最后得到的都是1月18号
+:::
+
+接下来判断当用户传入的单位为y（years/year）或M（month/months）时会做额外转化，目的是为了防止出现如当日期为2023-01-31时，增加一个月会变成2023-03-03而不是2023-02-28
+，其他单位则正常使用对应的setXXX方法
+
+转化完成后重新初始化并返回当前实例可供链式调用
