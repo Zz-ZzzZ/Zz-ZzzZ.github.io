@@ -2,7 +2,7 @@
 layout: home
 
 title: 米奇妙妙屋 🪁
-titleTemplate: Cv-Engineer123
+titleTemplate: Zz-ZzzZ
 
 hero:
   name: 米奇妙妙屋 🪁

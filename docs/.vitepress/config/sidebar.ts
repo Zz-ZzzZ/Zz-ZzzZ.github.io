@@ -71,6 +71,10 @@ export default [
       {
         text: 'vue-demi',
         link: '/code/vue-demi.md'
+      },
+      {
+        text: 'Dayjs',
+        link: '/code/dayjs.md'
       }
     ],
   },
