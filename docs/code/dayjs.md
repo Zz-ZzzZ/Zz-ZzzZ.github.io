@@ -179,7 +179,7 @@ T/t 是日期与时间的分隔符，与空格一样，并无区别
 
 ```javascript
 class Dayjs {
-    // ...
+   // ...
    $set(units, int) { // private set
       const unit = Utils.p(units)
       const utcPad = `set${this.$u ? 'UTC' : ''}`
@@ -230,7 +230,7 @@ const prettyUnit = (u) => {
 }
 ```
 
-根据传入的单位做统一转化，可传入缩写或全称或全称的复数
+根据传入的单位做统一转化，可传入缩写或全称或复数
 
 ::: tip
 ```javascript
@@ -261,3 +261,51 @@ dayjs('2023-01-10').set('day', 10)
 ，其他单位则正常使用对应的setXXX方法
 
 转化完成后重新初始化并返回当前实例可供链式调用
+
+
+## dayjs().get()
+
+```javascript
+class Dayjs {
+    // ...
+   get(unit) {
+      return this[Utils.p(unit)]()
+   }
+
+   $g(input, get, set) {
+      if (Utils.u(input)) return this[get]
+      return this.set(set, input)
+   }
+   // ...
+}
+
+const proto = Dayjs.prototype
+dayjs.prototype = proto;
+[
+   ['$ms', C.MS],
+   ['$s', C.S],
+   ['$m', C.MIN],
+   ['$H', C.H],
+   ['$W', C.D],
+   ['$M', C.M],
+   ['$y', C.Y],
+   ['$D', C.DATE]
+].forEach((g) => {
+   proto[g[1]] = function (input) {
+      return this.$g(input, g[0], g[1])
+   }
+})
+```
+
+在**导入**Dayjs模块时，Dayjs内部会在**原型链**上**挂载**以日期单位为属性，并且**支持修改**对应日期的方法，在get方法中**只能**获取对应的日期
+
+::: tip
+所以在修改日期时也可以使用原型链上的方法，**建议还是使用set()**
+```javascript
+// 两者是一样的
+dayjs().day(10)
+dayjs().set('day', 10)
+```
+:::
+
+在使用get方法时传入的单位实际就是访问挂载在原型链上的对应方法， get方法内部会对传入的单位进行转化，因此也支持缩写和复数
