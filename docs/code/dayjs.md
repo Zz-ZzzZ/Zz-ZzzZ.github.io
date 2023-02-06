@@ -309,3 +309,106 @@ dayjs().set('day', 10)
 :::
 
 在使用get方法时传入的单位实际就是访问挂载在原型链上的对应方法， get方法内部会对传入的单位进行转化，因此也支持缩写和复数
+
+## dayjs().format()
+
+```javascript
+class Dayjs {
+   // ... 
+   format(formatStr) {
+      const locale = this.$locale()
+
+      if (!this.isValid()) return locale.invalidDate || C.INVALID_DATE_STRING
+      // export const FORMAT_DEFAULT = 'YYYY-MM-DDTHH:mm:ssZ'
+      const str = formatStr || C.FORMAT_DEFAULT
+      const zoneStr = Utils.z(this)
+      const { $H, $m, $M } = this
+
+      const {
+         weekdays, months, meridiem
+      } = locale
+
+      // 获取字符串的短名称
+      const getShort = (arr, index, full, length) => (
+              (arr && (arr[index] || arr(this, str))) || full[index].slice(0, length)
+      )
+      
+      // 格式化小时，是否需要带0
+      const get$H = num => (
+              Utils.s($H % 12 || 12, num, '0')
+      )
+
+      // 格式化小时是否为AM/PM/am/pm
+      const meridiemFunc = meridiem || ((hour, minute, isLowercase) => {
+         const m = (hour < 12 ? 'AM' : 'PM')
+         return isLowercase ? m.toLowerCase() : m
+      })
+
+      const matches = {
+         // 截取年份最后两位 2023 => 23 
+         YY: String(this.$y).slice(-2),
+         YYYY: this.$y,
+         // 月份从0开始
+         M: $M + 1,
+         MM: Utils.s($M + 1, 2, '0'),
+         // 获取月份缩写 september => sep
+         MMM: getShort(locale.monthsShort, $M, months, 3),
+         // 获取月份全称
+         MMMM: getShort(months, $M),
+         D: this.$D,
+         DD: Utils.s(this.$D, 2, '0'),
+         d: String(this.$W),
+         // 获取星期缩写 monday => mo
+         dd: getShort(locale.weekdaysMin, this.$W, weekdays, 2),
+         // 获取星期缩写 monday => mon
+         ddd: getShort(locale.weekdaysShort, this.$W, weekdays, 3),
+         // 获取星期全称
+         dddd: weekdays[this.$W],
+         H: String($H),
+         HH: Utils.s($H, 2, '0'),
+         h: get$H(1),
+         hh: get$H(2),
+         // am/pm
+         a: meridiemFunc($H, $m, true),
+         // AM/PM
+         A: meridiemFunc($H, $m, false),
+         m: String($m),
+         mm: Utils.s($m, 2, '0'),
+         s: String(this.$s),
+         ss: Utils.s(this.$s, 2, '0'),
+         SSS: Utils.s(this.$ms, 3, '0'),
+         // 当前地区的时差
+         Z: zoneStr // 'ZZ' logic below
+      }
+      // export const REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g
+      return str.replace(C.REGEX_FORMAT, (match, $1) => $1 || matches[match] || zoneStr.replace(':', '')) // 'ZZ'
+   }
+   // ...
+}
+
+// Utils.s
+// 当字符串小于指定长度时可以拼接上需要拼接的字符
+const padStart = (string, length, pad) => {
+   const s = String(string)
+   if (!s || s.length >= length) return string
+   return `${Array((length + 1) - s.length).join(pad)}${string}`
+}
+```
+
+获取语言后检查解析的日期格式是否正确，若未传递参数则使用默认的格式化规则，然后定义每个日期单位解析的映射，最后通过replace方法返回完成格式化后的字符串。
+
+这里的主要点是使用replace方法中第二个参数以函数形式，可以进行多次匹配，并且可以返回不同情况下的结果
+
+::: tip 为什么第二个参数使用函数形式 -- [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace)
+`replace()` 方法返回一个由替换值（`replacement`）替换部分或所有的模式（`pattern`）匹配项后的新字符串。模式可以是一个字符串或者一个正则表达式，替换值可以是一个字符串或者一个每次匹配都要调用的回调函数。**如果`pattern`是字符串，则仅替换第一个匹配项。**
+:::
+
+::: tip 指定一个函数作为参数 -- [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace#描述)
+你可以指定一个函数作为第二个参数。在这种情况下，当匹配执行后，该函数就会执行。**函数的返回值作为替换字符串。** (注意：上面提到的特殊替换参数在这里不能被使用。) 另外要注意的是，**如果第一个参数是正则表达式，并且其为全局匹配模式，那么这个方法将被多次调用，每次匹配都会被调用。**
+:::
+
+函数内的第二个参数$1用于匹配`[([^\]]+)]` 个人猜测这个匹配规则可以将`dayjs('2023-01-31').format('[现在时间：] YYYY-MM-DD')`转化为 `现在时间：2023-01-31`
+
+::: tip $1是什么 -- [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace#描述)
+假如 replace() 方法的第一个参数是一个RegExp 对象，则代表第 n 个**括号匹配的字符串**。（对应于上述的$1，$2 等。）例如，如果是用 /(\a+)(\b+)/ 这个来匹配，p1 就是匹配的 \a+，p2 就是匹配的 \b+。
+:::
