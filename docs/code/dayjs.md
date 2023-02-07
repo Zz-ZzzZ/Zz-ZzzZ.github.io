@@ -412,3 +412,58 @@ const padStart = (string, length, pad) => {
 ::: tip $1是什么 -- [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace#描述)
 假如 replace() 方法的第一个参数是一个RegExp 对象，则代表第 n 个**括号匹配的字符串**。（对应于上述的$1，$2 等。）例如，如果是用 /(\a+)(\b+)/ 这个来匹配，p1 就是匹配的 \a+，p2 就是匹配的 \b+。
 :::
+
+## dayjs().add() | dayjs().subtract()
+
+```javascript
+class Dayjs {
+   // ... 
+   add(number, units) {
+      number = Number(number) // eslint-disable-line no-param-reassign
+      const unit = Utils.p(units)
+      const instanceFactorySet = (n) => {
+         const d = dayjs(this)
+         return Utils.w(d.date(d.date() + Math.round(n * number)), this)
+      }
+      if (unit === C.M) {
+         return this.set(C.M, this.$M + number)
+      }
+      if (unit === C.Y) {
+         return this.set(C.Y, this.$y + number)
+      }
+      if (unit === C.D) {
+         return instanceFactorySet(1)
+      }
+      if (unit === C.W) {
+         return instanceFactorySet(7)
+      }
+      const step = {
+         [C.MIN]: C.MILLISECONDS_A_MINUTE,
+         [C.H]: C.MILLISECONDS_A_HOUR,
+         [C.S]: C.MILLISECONDS_A_SECOND
+      }[unit] || 1 // ms
+
+      const nextTimeStamp = this.$d.getTime() + (number * step)
+      return Utils.w(nextTimeStamp, this)
+   }
+   // ...
+}
+
+// Utils.w
+const wrapper = (date, instance) =>
+        dayjs(date, {
+           locale: instance.$L,
+           utc: instance.$u,
+           x: instance.$x,
+           $offset: instance.$offset // todo: refactor; do not use this.$offset in you code
+        })
+```
+
+将传入的值统一转化为数字类型，并获取传入的单位，年份和月份的增加直接使用`set()`方法，日与星期则使用定义的工厂函数来修改，
+时分秒则使用时间戳形式修改，最后返回重新包装后的实例
+
+::: tip instanceFactorySet()
+从git历史提交记录上看,原本日与星期与时分秒均使用**时间戳**来进行增加,在其他地区用户的不同令时会导致`add()`无效,具体查看[PR](https://github.com/iamkun/dayjs/pull/319)
+:::
+
+`subtract()`则是将出传入的值改为负数并调用`add()`
