@@ -464,6 +464,10 @@ const wrapper = (date, instance) =>
 
 ::: tip instanceFactorySet()
 从git历史提交记录上看,原本日与星期与时分秒均使用**时间戳**来进行增加,在其他地区用户的不同令时会导致`add()`无效,具体查看[PR](https://github.com/iamkun/dayjs/pull/319)
+
+---
+
+世界上不是所有地方都是一年四季24小时的 - 鲁迅
 :::
 
 `subtract()`则是将出传入的值改为负数并调用`add()`
