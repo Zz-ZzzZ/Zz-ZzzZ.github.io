@@ -42,6 +42,10 @@ export default [
       {
         text: 'display: inline-block',
         link: '/bug/inline-block.md'
+      },
+      {
+        text: '移动端安全区域适配',
+        link: '/bug/safe-area.md'
       }
     ],
   },
