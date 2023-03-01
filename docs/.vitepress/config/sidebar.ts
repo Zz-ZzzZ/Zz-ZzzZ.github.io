@@ -57,10 +57,6 @@ export default [
     text: '笔记',
     items: [
       {
-        text: 'reactivity',
-        link: '/code/reactivity.md',
-      },
-      {
         text: 'vuex-persistedstate',
         link: '/code/vuex-persistedstate.md',
       },
