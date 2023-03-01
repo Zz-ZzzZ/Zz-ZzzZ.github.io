@@ -46,6 +46,10 @@ export default [
       {
         text: '移动端安全区域适配',
         link: '/bug/safe-area.md'
+      },
+      {
+        text: '移动端Input输入拼音',
+        link: '/bug/input-zh.md'
       }
     ],
   },
