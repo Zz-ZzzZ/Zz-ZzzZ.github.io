@@ -132,7 +132,17 @@ const proxySettings = prepareProxy(
 )
 ```
 
-当处于非生产模式时，将热更新和devServer注入到webpack的entry中，这样在保存代码时，浏览器可以实时更新
+当处于非生产模式时，将HMR模块和devServer模块注入到webpack的entry中，这样在保存代码时，浏览器可以实时更新
+
+::: tip sockjs-node是什么
+sockjs-node 是一个 WebSocket 库，它提供了类似 WebSocket 的双向通信能力，以帮助开发者在不支持 WebSocket 的环境下实现实时数据通信和实时更新等功能。
+
+在现代 Web 应用中，实时数据通信已经成为了一个常见的需求，而 WebSocket 是一个强大的原生协议，能够实现双向数据传输。但是，并不是所有的浏览器和网络环境都支持 WebSocket，在这种情况下，sockjs-node 提供了一个非常好的替代方案。
+
+sockjs-node 支持多种协议，包括 WebSocket、XHR streaming、JSONP polling 等，通过多种协议的组合，它能够更好地适应不同的浏览器和网络环境。sockjs-node 还提供了一个简单的 API，以便开发者在应用程序中方便地集成其功能。
+
+sockjs-node 通常与 Node.js 一起使用，但它也可以与其他后端框架配合使用，以便于实现实时数据通信功能。
+:::
 
 ```javascript
 if (!isProduction) {
@@ -168,6 +178,14 @@ if (!isProduction) {
     addDevClientToEntry(webpackConfig, devClients)
 }
 ```
+
+:::tip webpack-dev-server/client和webpack/hot/dev-server的关系
+webpack-dev-server/client 模块主要负责建立 WebSocket 连接，获取实时更新的代码，以及将更新后的代码注入到页面中，实现整个页面的热替换。
+
+而 webpack/hot/dev-server 模块则是热替换功能的核心模块， 主要用于在服务器端监视文件的变化，然后通过 sockjs 向客户端发送更新消息，告诉客户端有哪些模块需要更新。
+
+这两个模块其实是运行在不同的环境中，webpack-dev-server/client 运行在浏览器端，而 webpack/hot/dev-server 则运行在服务器端
+:::
 
 ## 创建webpack，并启动devServer
 
@@ -237,14 +255,11 @@ const server = new WebpackDevServer(compiler, Object.assign({
 })
 ```
 
-:::tip SIGINT与SIGTERM -- 来自node文档
+:::tip SIGINT与SIGTERM
 
-- 'SIGTERM' and 'SIGINT' have default handlers on non-Windows platforms that reset the terminal mode before exiting with
-  code 128 + signal number. If one of these signals has a listener installed, its default behavior will be removed (
-  Node.js will no longer exit).
-- 'SIGTERM' is not supported on Windows, it can be listened on.
-- 'SIGINT' from the terminal is supported on all platforms, and can usually be generated with Ctrl+C (though this may be
-  configurable). It is not generated when terminal raw mode is enabled and Ctrl+C is used.
+- 在Node.js环境中，SIGINT表示"Signal Interrupt"，是一个信号的名称，是由终端在用户按下Ctrl+C时发送给Node.js进程的信号。
+
+- 在Node.js中，SIGTERM表示"Signal Terminate"，是一个信号的名称，通常用于指示需要终止进程的信号。与SIGINT不同，SIGTERM信号不是由键盘上的输入触发的，而是由操作系统或其他外部实体发起的。
 
 :::
 
