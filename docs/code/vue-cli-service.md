@@ -32,8 +32,7 @@ const service = new Service(process.env.VUE_CLI_CONTEXT || process.cwd())
 const rawArgv = process.argv.slice(2)
 ```
 
-使用minimist.js库为命令所传递的参数做匹配，若参数为boolean内的元素则匹配结果对应为 参数名：true，这样可以告知开启了哪些额外选项,
-如vue-cli-service serve --open 则open: true
+使用minimist.js库为命令所传递的参数做匹配，若参数为boolean内的元素则匹配结果对应为 参数名：true，这样可以告知开启了哪些额外选项
 
 ```javascript
 const args = require('minimist')(rawArgv, {
@@ -54,6 +53,23 @@ const args = require('minimist')(rawArgv, {
 })
 
 ```
+
+::: tip minimist.js
+例：`node index.js --name=John --age=30 --isEmployed=true`
+
+则输出:
+
+```javascript
+{
+  name: 'John',
+  age: 30,
+  isEmployed: true,
+  _: []
+}
+```
+
+其中，_是一个数组，其中包含所有没有被解析为参数的未知参数。在此示例中，未知参数数量为0。
+:::
 
 定义command，这里的command就是rawArgv内的第一项也就是上面的serve
 
