@@ -66,7 +66,7 @@ export default defineComponent({
 ## 源码阅读
 于是乎，我就翻了一下它的源码看了一下，由于这两个事件都是从选择日期完成后触发，那么先从选择日期触发那一阶段入手，从`Vue DevTool - Timeline`可以看到点击日期的时候触发了`pick`事件
 
-来到`date-picker/src/panel/date-range.vue`中查找注册的pick事件，在文件内找到了两个组件注册了`pick`事件，那么这两个组件就是对应的`type = daterange`中的左右日期面板
+来到`date-picker/src/panel/date-range.vue`中查找注册的`pick`事件，在文件内找到了两个组件注册了`pick`事件，那么这两个组件就是对应的`type = daterange`中的左右日期面板
 
 ```vue
 <template>
@@ -124,7 +124,7 @@ function handleRangePick(val, close = true) {
 }
 ```
 
-进入`this.handleConfirm()`
+这里只需要关注`this.handleConfirm()`
 
 ```javascript
 function handleConfirm(visible = false) {
@@ -138,7 +138,7 @@ function handleConfirm(visible = false) {
 
 来到它的父级组件`date-picker/src/picker/date-picker.js`内可以看到使用了`mixins`将`date-picker/src/picker.vue`组件混入（原来mixins还能混入组件的），那么核心都在`picker.vue`中
 
-进入`picker.vue`中选择日期的面板是点击输入框后出现的，因此需要关注它的`focus`事件
+进入`picker.vue`中，由于选择日期的面板是点击输入框后出现的，因此只需要关注`el-input`的`focus`事件
 
 ```javascript
 function handleFocus() {
@@ -308,7 +308,7 @@ function emitChange(val) {
 
 ## end
 
-所以大概是文档没写清楚两种使用方法应该注册不同的事件，并不是bug
+所以大概是文档没写清楚两种使用方法应该注册不同的事件，这是`Vue`的一些特性，并不是bug
 
 - 使用`v-model`时注册`change`事件
 - 使用`value`绑定时注册`input`事件（也可以额外注册`change`事件，但是必须通过`input`事件赋值）
