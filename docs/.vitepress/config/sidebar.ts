@@ -50,6 +50,10 @@ export default [
       {
         text: '移动端Input输入拼音',
         link: '/bug/input-zh.md'
+      },
+      {
+        text: 'el-date-picker',
+        link: '/bug/el-date-picker.md'
       }
     ],
   },
