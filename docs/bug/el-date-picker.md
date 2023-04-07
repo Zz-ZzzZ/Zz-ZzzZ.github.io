@@ -292,7 +292,7 @@ function emitChange(val) {
 }
 ```
 
-所以需要在`input`事件内对绑定的`value`进行赋值，才会触发`change`事件
+所以需要在`input`事件内对绑定的`value`进行赋值，`value`有值且不相等才会触发`change`事件
 
 ## 为什么v-model是正常的
 
