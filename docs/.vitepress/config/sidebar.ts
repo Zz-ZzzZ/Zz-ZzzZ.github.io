@@ -65,12 +65,17 @@ export default [
         link: '/code/vuex-persistedstate.md',
       },
       {
-        text: 'vue-cli-service',
-        link: '/code/vue-cli-service.md'
-      },
-      {
-        text: 'vue-cli-service serve',
-        link: '/code/vue-cli-service-serve.md'
+        text: 'vue-cli',
+        items: [
+          {
+            text: '起步',
+            link: '/code/vue-cli/home.md'
+          },
+          {
+            text: 'serve',
+            link: '/code/vue-cli/serve.md'
+          }
+        ]
       },
       {
         text: 'vue-clamp',
@@ -83,6 +88,20 @@ export default [
       {
         text: 'Dayjs',
         link: '/code/dayjs.md'
+      },
+      {
+        text: 'unplugin-auto-import',
+        items: [
+          {
+            text: '起步',
+            link: '/code/uai/home.md'
+          },
+          {
+            text: 'scanDirs',
+            link: '/code/uai/scan.md'
+          }
+        ]
+        // link: '/code/unplugin-auto-import.md'
       }
     ],
   },

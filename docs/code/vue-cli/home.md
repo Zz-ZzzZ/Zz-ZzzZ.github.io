@@ -59,7 +59,7 @@ const args = require('minimist')(rawArgv, {
 
 则输出:
 
-```javascript
+```
 {
   name: 'John',
   age: 30,
