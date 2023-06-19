@@ -479,4 +479,40 @@ async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
 
 回到`generateDTS`内，内部保存了每次生成的新旧值，新生成的类型会替换旧生成的类型数据，最后返回生成的数据并根据新旧内容决定是否输出文件。
 
-至此就完成了`dts`文件的输出过程
+至此就完成了`dts`文件的输出过程。
+
+接下来回到`writeFile`中来看一下`eslint`规则的生成。
+
+### generateESLint()
+
+```typescript
+async function parseESLint() {
+  const configStr = existsSync(eslintrc.filepath!) ? await fs.readFile(eslintrc.filepath!, 'utf-8') : ''
+  const config = JSON.parse(configStr || '{ "globals": {} }')
+  return config.globals as Record<string, ESLintGlobalsPropValue>
+}
+
+async function generateESLint () {
+  return generateESLintConfigs(await unimport.getImports(), eslintrc, await parseESLint())
+}
+
+export function generateESLintConfigs(
+        imports: Import[],
+        eslintrc: ESLintrc,
+        globals: Record<string, ESLintGlobalsPropValue> = {},
+) {
+  const eslintConfigs = { globals }
+
+  imports
+          .map(i => i.as ?? i.name)
+          .filter(Boolean)
+          .sort()
+          .forEach((name) => {
+            eslintConfigs.globals[name] = eslintrc.globalsPropValue || true
+          })
+  const jsonBody = JSON.stringify(eslintConfigs, null, 2)
+  return jsonBody
+}
+```
+
+这一部分则比较简单，根据文件路径读取`json`文件，然后解析好`json`字符串后取其`gobals`属性，写入时根据`imports`内的数据进行**过滤、排序**后转为`json`字符串写入。
