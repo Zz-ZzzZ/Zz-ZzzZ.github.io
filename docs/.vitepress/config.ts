@@ -11,5 +11,5 @@ export default defineConfig({
     logo: '/logo.svg',
     sidebar,
     nav: navbar,
-  },
+  }
 })

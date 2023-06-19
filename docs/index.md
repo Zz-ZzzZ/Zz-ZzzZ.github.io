@@ -1,11 +1,11 @@
 ---
 layout: home
 
-title: 米奇妙妙屋 🪁
+title: Zz-ZzzZ 🪁
 titleTemplate: Zz-ZzzZ
 
 hero:
-  name: 米奇妙妙屋 🪁
+  name: Zz-ZzzZ 🪁
   tagline: 分享日常开发中的实践、踩坑、学习笔记 💪
   image:
     src: /logo.svg
