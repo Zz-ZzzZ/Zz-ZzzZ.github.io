@@ -475,7 +475,9 @@ async function generateTypeDeclarations (options?: TypeDeclarationOptions) {
 }
 ```
 
-在这里会分别进行依赖的类型生成(`import {} from '')`和导出类型的生成(`export type {} from '')`，最后导出生成的结果。
+在这里会分别进行依赖的类型生成(`toTypeDeclarationFile()`)和导出类型的生成(`toTypeReExports()`)，
+然后下面对`ctx.addons`进行循环也就是使用用户传递的插件，由**起步**里的`createUnimport`内可以看到传递了`declaration`的自定义生成规则，最后导出生成的结果，
+所以`dts`前的一串注释就是这么个由来。
 
 回到`generateDTS`内，内部保存了每次生成的新旧值，新生成的类型会替换旧生成的类型数据，最后返回生成的数据并根据新旧内容决定是否输出文件。
 
