@@ -99,9 +99,12 @@ export default [
           {
             text: 'scanDirs',
             link: '/code/uai/scan.md'
+          },
+          {
+            text: 'transform',
+            link: '/code/uai/transform.md'
           }
         ]
-        // link: '/code/unplugin-auto-import.md'
       }
     ],
   },
