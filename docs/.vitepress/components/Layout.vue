@@ -34,7 +34,7 @@ import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
   width: 100%;
   height: 100%;
   background-image: url("./assets/bg.svg");
-  opacity: 0.1;
+  opacity: 0.05;
   position: absolute;
   z-index: -1;
 }
@@ -48,11 +48,9 @@ import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
 
 .site-main {
   width: 700px;
-  height: 90%;
-  background: #ffffff;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  height: 95%;
   border-radius: 10px;
-  padding: 30px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden auto;
@@ -69,9 +67,8 @@ import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
 
 @media screen and (max-width: 640px){
   .site-main {
-    width: 90%;
-    height: 90%;
-    padding: 20px 15px;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

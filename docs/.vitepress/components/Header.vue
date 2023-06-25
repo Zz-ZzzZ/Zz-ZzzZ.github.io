@@ -23,7 +23,6 @@ const handleLinkGithub = () => {
     <div @click="handleLinkGithub">
       <img :src="github" class="header-github" alt="">
     </div>
-    <!--    <span class="header-github" @click="handleLinkGithub">Github</span>-->
   </div>
   <div class="header-divider"></div>
 </template>
