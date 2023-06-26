@@ -15,10 +15,13 @@ const route = useRoute()
 
 const { page } = useData()
 
+const isRoot = ref(false)
+
 const siteRef = ref()
 
-watch(() => route.path, () => {
+watch(() => route.path, (newPath) => {
   siteRef.value.scrollTop = 0
+  isRoot.value = newPath === '/'
 })
 </script>
 
@@ -28,8 +31,8 @@ watch(() => route.path, () => {
     <div class="site-container" ref="siteRef">
       <div class="site-main">
         <Header class="site-header"/>
-        <Home v-if="route.path === '/'"/>
-        <Content v-else class="vp-doc site-content"/>
+        <Home v-show="isRoot"/>
+        <Content v-show="!isRoot" class="vp-doc site-content"/>
       </div>
     </div>
   </div>
