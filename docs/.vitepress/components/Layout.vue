@@ -20,9 +20,11 @@ const isRoot = ref(false)
 const siteRef = ref()
 
 watch(() => route.path, (newPath) => {
-  siteRef.value.scrollTop = 0
+  if (siteRef.value) {
+    siteRef.value.scrollTop = 0
+  }
   isRoot.value = newPath === '/'
-})
+}, { immediate: true })
 </script>
 
 <template>
@@ -80,7 +82,7 @@ watch(() => route.path, (newPath) => {
   flex: 1;
 }
 
-@media screen and (max-width: 640px){
+@media screen and (max-width: 640px) {
   .site-main {
     width: 100%;
     height: 100%;
@@ -92,7 +94,7 @@ body {
   margin: 0;
 }
 
-.vp-doc div[class*='language-']  {
+.vp-doc div[class*='language-'] {
   margin: 0;
 }
 
@@ -100,7 +102,7 @@ body {
   color: var(--vp-c-yellow)
 }
 
-.vp-doc .header-anchor:before {
-  content: '';
+.vp-doc .header-anchor {
+  display: none;
 }
 </style>
