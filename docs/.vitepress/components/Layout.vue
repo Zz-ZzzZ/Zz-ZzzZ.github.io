@@ -96,4 +96,8 @@ body {
 .vp-doc a {
   color: var(--vp-c-yellow)
 }
+
+.vp-doc .header-anchor:before {
+  content: '';
+}
 </style>
