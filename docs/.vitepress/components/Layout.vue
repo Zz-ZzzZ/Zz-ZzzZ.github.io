@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from './Header.vue';
-import { Content } from 'vitepress'
+import { Content, useData, useRoute } from 'vitepress'
 import 'vitepress/dist/client/theme-default/styles/vars.css'
 import 'vitepress/dist/client/theme-default/styles/base.css'
 import 'vitepress/dist/client/theme-default/styles/fonts.css'
@@ -8,15 +8,28 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-code.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-code-group.css'
 import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
+import { ref, watch } from 'vue';
+import Home from './Home.vue';
+
+const route = useRoute()
+
+const { page } = useData()
+
+const siteRef = ref()
+
+watch(() => route.path, () => {
+  siteRef.value.scrollTop = 0
+})
 </script>
 
 <template>
   <div class="site">
     <div class="site-bg"/>
-    <div class="site-container">
+    <div class="site-container" ref="siteRef">
       <div class="site-main">
         <Header class="site-header"/>
-        <Content class="vp-doc site-content"/>
+        <Home v-if="route.path === '/'"/>
+        <Content v-else class="vp-doc site-content"/>
       </div>
     </div>
   </div>
@@ -44,17 +57,16 @@ import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden auto;
 }
 
 .site-main {
   width: 700px;
-  height: 95%;
+  height: 100%;
   border-radius: 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow: hidden auto;
-
 }
 
 .site-header {
