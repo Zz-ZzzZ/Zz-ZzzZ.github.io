@@ -29,4 +29,13 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
+@media screen and (max-width: 640px){
+  .home .vp-doc a {
+    font-size: 14px;
+  }
+
+  .home .vp-doc ul p {
+    padding: 7px 14px;
+  }
+}
 </style>

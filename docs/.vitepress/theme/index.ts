@@ -1,4 +1,8 @@
-import DefaultTheme from 'vitepress/theme';
-import './style.css'
+import { Theme } from 'vitepress';
+import Layout from '../components/Layout.vue'
 
-export default DefaultTheme
+const theme: Theme = {
+  Layout
+}
+
+export default theme
