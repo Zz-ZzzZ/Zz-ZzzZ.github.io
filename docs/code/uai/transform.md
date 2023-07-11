@@ -165,7 +165,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
 }
 ```
 
-使用`stripCommentsAndStrings`对代码串进行去除注释、去除引号内的内容、替换正则表达式。
+使用`stripCommentsAndStrings`对代码串进行删除注释、删除引号内的内容、替换正则表达式。
 
 ```typescript
 import React from 'react'
@@ -173,12 +173,15 @@ import React from 'react'
 import React from ''
 ```
 
-使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型，随后取出之前得到的依赖导出分析数据。
+使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型，接下来使用`matchRE`内定义的正则表达式进行全量匹配。
 
-我觉得这里只需要关注一下`matchedImports`的赋值过程就行，其它大概是一些边界处理操作，`matchedImports`是根据`occurrenceMap`内储存的`name`和导出依赖关系的数据进行整合。
+这则正则表达式比较复杂，我借助了一下`ChatGPT`来进行解析，大致可以得知是用于匹配`变量`、`switch内的case`、`instanceof`和其它一些可能会存在使用依赖的地方。
 
-接下来只需要看一下`addImportToCode`内的实现就可以知道依赖是如何写入到代码串内。
+其中前两个`if`块用于匹配`es6`下的解构以及`switch`的边界处理，最后会将匹配到的依赖名称以及它所在的下标存入`occurrenceMap`中。
 
+接下来对定义的`excludeRE`内的正则表达式进行逐一过滤，目的是若已定义了已存在的依赖则从`occurrenceMap`移除。
+
+最后将`occurrenceMap`的`key`储存至`matchedImports`中，将最小的导入下标位置储存至`firstOccurrence`中，`transformVirtualImports`虚拟模块的导入就不看了。
 
 ## addImportToCode()
 
@@ -248,7 +251,7 @@ export function addImportToCode (
 }
 ```
 
-在本插件中，未设置`mergeExisting`属性，因此跳过这一部分`if`代码块，直接进入`toImports`内。
+这里并未设置`mergeExisting`属性，因此跳过这一部分`if`代码块，直接进入`toImports`内。
 
 ```typescript
 export function toImports (imports: Import[], isCJS = false) {
@@ -310,4 +313,4 @@ export function toImports (imports: Import[], isCJS = false) {
 
 最后，在`transform`内判断文件有无更改，若存在新的依赖也会更新之前分析的依赖导出关系。
 
-`transform`这里看的比较少，一些边界操作没有仔细探究，主要是为了弄明白这些依赖是如何插入到代码中以及依赖使用的分析。
+`transform`这里一些边界操作没有仔细探究，主要是为了弄明白这些依赖是如何插入到代码中以及依赖使用的分析。
