@@ -173,15 +173,28 @@ import React from 'react'
 import React from ''
 ```
 
-使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型，接下来使用`matchRE`内定义的正则表达式进行全量匹配。
+使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型，接下来使用`matchRE`内定义的正则表达式进行全局匹配。
 
-这则正则表达式比较复杂，我借助了一下`ChatGPT`来进行解析，大致可以得知是用于匹配`变量`、`switch内的case`、`instanceof`和其它一些可能会存在使用依赖的地方。
+第一`if`中根据注释的意思大概是匹配对象的`.`访问的形式，第二个`if`则是以`:`为结尾但不是处于`case:`和`三元表达式`下。
 
-其中前两个`if`块用于匹配`es6`下的解构以及`switch`的边界处理，最后会将匹配到的依赖名称以及它所在的下标存入`occurrenceMap`中。
+接下来将定义好的的`excludeRE`内的正则表达式并根据这些匹配规则(`import|export`、`function xxx()`、`class xxx`、`const|let|var xxx`)对`occurrenceMap`内储存的项进行移除，其目的是移除已定义的依赖。
 
-接下来对定义的`excludeRE`内的正则表达式进行逐一过滤，目的是若已定义了已存在的依赖则从`occurrenceMap`移除。
+```typescript
+const excludeRE = [
+  // imported/exported from other module
+  /\b(import|export)\b([\s\w_$*{},]+)\sfrom\b/gs,
+  // defined as function
+  /\bfunction\s*([\w_$]+?)\s*\(/gs,
+  // defined as class
+  /\bclass\s*([\w_$]+?)\s*{/gs,
+  // defined as local variable
+  /\b(?:const|let|var)\s+?(\[.*?\]|\{.*?\}|.+?)\s*?[=;\n]/gs
+];
+```
 
-最后将`occurrenceMap`的`key`储存至`matchedImports`中，将最小的导入下标位置储存至`firstOccurrence`中，`transformVirtualImports`虚拟模块的导入就不看了。
+`occurrenceMap`中的`value`储存的是依赖插入的下标位置，这里获取了最靠前的下标位置后储存至`firstOccurrence`中，用于依赖插入位置的起点，`transformVirtualImports`和`addons`在这个库里没有定义就不看了。
+
+至此已经完成了对代码串内的依赖分析，接下来将依赖写入代码中。
 
 ## addImportToCode()
 
@@ -309,8 +322,8 @@ export function toImports (imports: Import[], isCJS = false) {
 
 这里就是将使用到的依赖，根据模块类型一一转化为`require`/`import`。
 
-回到`addImportToCode`内，将转化完毕后的结果，根据`injectAtLast`属性来决定插入到已存在于文件内的其它导入语句之前或之后。
+回到`addImportToCode`内，将转化完毕后的结果，根据`injectAtLast`属性来决定插入到已存在于文件内的**静态导入**语句**之前**或**之后**。
 
 最后，在`transform`内判断文件有无更改，若存在新的依赖也会更新之前分析的依赖导出关系。
 
-`transform`这里一些边界操作没有仔细探究，主要是为了弄明白这些依赖是如何插入到代码中以及依赖使用的分析。
+`transform`这里有一些边界操作没有仔细探究，主要重点还是为了弄明白这些依赖是如何插入到代码中以及依赖使用的分析。
