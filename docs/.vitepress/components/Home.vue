@@ -4,16 +4,43 @@ import 'vitepress/dist/client/theme-default/styles/vars.css'
 import 'vitepress/dist/client/theme-default/styles/base.css'
 import 'vitepress/dist/client/theme-default/styles/fonts.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
+import { onMounted, ref, Transition } from "vue";
+
+const isMounted = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    isMounted.value = true
+  }, 0)
+})
 </script>
 
 <template>
   <div class="home">
-    <Content class="vp-doc"/>
+    <Transition>
+      <Content v-if="isMounted" class="vp-doc"/>
+    </Transition>
   </div>
 </template>
 
 <style>
-.home .vp-doc ul{
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.home .vp-doc ul {
   list-style: none;
   padding-inline-start: 0;
 }
@@ -29,7 +56,7 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
-@media screen and (max-width: 640px){
+@media screen and (max-width: 640px) {
   .home .vp-doc a {
     font-size: 14px;
   }
