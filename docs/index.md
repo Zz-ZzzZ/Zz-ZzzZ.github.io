@@ -15,6 +15,8 @@
 - [Vue中快速定义Props属性的函数封装 --- 2022/08](/share/props.html)
 
 - [在JavaScript中实现style的CanIUse --- 2022/08](/share/canIUseStyle.html)
+- 
+- [在不使用Event Bus来实现深层组件嵌套事件通信 --- 2023/08](/share/event.html)
 
 ### 踩坑 🧐
 
