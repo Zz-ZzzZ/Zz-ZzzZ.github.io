@@ -98,10 +98,6 @@ body {
   margin: 0;
 }
 
-.vp-doc a {
-  color: var(--vp-c-yellow)
-}
-
 .vp-doc .header-anchor {
   display: none;
 }
