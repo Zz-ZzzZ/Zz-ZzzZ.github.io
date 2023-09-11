@@ -10,12 +10,12 @@ const isMounted = ref(false)
 onMounted(() => {
   setTimeout(() => {
     isMounted.value = true
-  }, 0)
+  }, 200)
 })
 </script>
 
 <template>
-  <div class="home">
+  <div class="home" :class="{'un-mounted': !isMounted}">
     <Transition>
       <Content v-if="isMounted" class="vp-doc"/>
     </Transition>
@@ -38,6 +38,10 @@ onMounted(() => {
 .v-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+
+.un-mounted {
+  opacity: 0;
 }
 
 .home .vp-doc ul {
