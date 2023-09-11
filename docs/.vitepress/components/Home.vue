@@ -4,46 +4,15 @@ import 'vitepress/dist/client/theme-default/styles/vars.css'
 import 'vitepress/dist/client/theme-default/styles/base.css'
 import 'vitepress/dist/client/theme-default/styles/fonts.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
-import { onMounted, ref, Transition } from "vue";
-
-const isMounted = ref(false)
-onMounted(() => {
-  setTimeout(() => {
-    isMounted.value = true
-  }, 500)
-})
 </script>
 
 <template>
-  <Transition>
-    <div v-if="isMounted" class="home" :class="{'un-mounted': !isMounted}">
-      <Content class="vp-doc"/>
-    </div>
-  </Transition>
+  <div class="home">
+    <Content class="vp-doc"/>
+  </div>
 </template>
 
 <style>
-.v-enter-to,
-.v-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: all 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.un-mounted {
-  opacity: 0;
-}
-
 .home .vp-doc ul {
   list-style: none;
   padding-inline-start: 0;

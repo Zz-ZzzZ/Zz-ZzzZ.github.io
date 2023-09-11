@@ -8,7 +8,7 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-code.css'
 import 'vitepress/dist/client/theme-default/styles/components/vp-code-group.css'
 import 'vitepress/dist/client/theme-default/styles/components/custom-block.css'
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Home from './Home.vue';
 
 const route = useRoute()
@@ -18,6 +18,14 @@ const { page } = useData()
 const isRoot = ref(false)
 
 const siteRef = ref()
+
+const isMounted = ref(false)
+
+onMounted(() => {
+  setTimeout(() => {
+    isMounted.value = true
+  }, 500)
+})
 
 watch(() => route.path, (newPath) => {
   if (siteRef.value) {
@@ -33,8 +41,8 @@ watch(() => route.path, (newPath) => {
     <div class="site-container" ref="siteRef">
       <div class="site-main">
         <Header class="site-header"/>
-        <Home v-show="isRoot"/>
-        <Content v-show="!isRoot" class="vp-doc site-content"/>
+        <Home v-show="isRoot && isMounted"/>
+        <Content v-show="!isRoot && isMounted" class="vp-doc site-content"/>
       </div>
     </div>
   </div>
