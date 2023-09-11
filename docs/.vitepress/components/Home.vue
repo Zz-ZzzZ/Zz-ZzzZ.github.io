@@ -10,16 +10,16 @@ const isMounted = ref(false)
 onMounted(() => {
   setTimeout(() => {
     isMounted.value = true
-  }, 200)
+  }, 500)
 })
 </script>
 
 <template>
-  <div class="home" :class="{'un-mounted': !isMounted}">
-    <Transition>
-      <Content v-if="isMounted" class="vp-doc"/>
-    </Transition>
-  </div>
+  <Transition>
+    <div v-if="isMounted" class="home" :class="{'un-mounted': !isMounted}">
+      <Content class="vp-doc"/>
+    </div>
+  </Transition>
 </template>
 
 <style>
