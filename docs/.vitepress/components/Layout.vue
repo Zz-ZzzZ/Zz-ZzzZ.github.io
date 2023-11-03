@@ -49,11 +49,16 @@ watch(() => route.path, (newPath) => {
 </template>
 
 <style scoped>
+@font-face {
+  font-family: BlogFont;
+  src: url('./assets/font.ttf');
+}
+
 .site {
   margin: 0;
   padding: 0;
   height: 100vh;
-  font-family: var(--vp-font-family-base);
+  font-family: BlogFont, serif;
 }
 
 .site-bg {

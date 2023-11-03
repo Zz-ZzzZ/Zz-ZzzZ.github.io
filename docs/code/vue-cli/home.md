@@ -1,10 +1,10 @@
 # vue-cli-service 源码阅读笔记
 
-一直对vue-cli-service如何启动比较感兴趣，因此对着官方文档和debug尝试阅读一下(version: vue-cli v4)
+一直对`vue-cli-service`如何启动比较感兴趣，因此对着官方文档和`debug`尝试阅读一下(**version: vue-cli v4**)。
 
 ## vue-cli-service.js
 
-使用semver.js库来匹配当前操作系统的node版本是否大于vue-cli-service所要求的最低node版本（最低为node v8）
+使用`semver.js`库来匹配当前操作系统的`node`版本是否大于`vue-cli-service`所要求的最低`node`版本（最低为**node v8**）。
 
 ```javascript
 const requiredVersion = require('../package.json').engines.node
@@ -19,20 +19,20 @@ if (!semver.satisfies(process.version, requiredVersion, {includePrerelease: true
 }
 ```
 
-接下来将会实例化Service类，若未指定VUE_CLI_CONTEXT的值则使用当前路径
+接下来将会实例化`Service`类，若未指定`VUE_CLI_CONTEXT`的值则使用当前路径。
 
 ```javascript
 const Service = require('../lib/Service')
 const service = new Service(process.env.VUE_CLI_CONTEXT || process.cwd())
 ```
 
-截取argv从第二项开始的所有元素，也就是 vue-cli-service 后面所有的参数，如 vue-cli-service serve = ['serve'] 并储存在rawArgv中
+截取`argv`从第二项开始的所有元素，也就是 `vue-cli-service` 后面所有的参数，如 `vue-cli-service serve = ['serve']` 并储存在`rawArgv`中。
 
 ```javascript
 const rawArgv = process.argv.slice(2)
 ```
 
-使用minimist.js库为命令所传递的参数做匹配，若参数为boolean内的元素则匹配结果对应为 参数名：true，这样可以告知开启了哪些额外选项
+使用`minimist.js`库为命令所传递的参数做匹配，若参数为`boolean`内的元素则匹配结果对应为 参数名：`true`，这样可以告知开启了哪些额外选项。
 
 ```javascript
 const args = require('minimist')(rawArgv, {
@@ -68,16 +68,16 @@ const args = require('minimist')(rawArgv, {
 }
 ```
 
-其中，_是一个数组，其中包含所有没有被解析为参数的未知参数。在此示例中，未知参数数量为0。
+其中，_是一个数组，其中包含所有没有被解析为参数的未知参数。在此示例中，未知参数数量为**0**。
 :::
 
-定义command，这里的command就是rawArgv内的第一项也就是上面的serve
+定义`command`，这里的`command`就是`rawArgv`内的第一项也就是上面的`serve`。
 
 ```javascript
 const command = args._[0]
 ```
 
-开启服务
+开启服务。
 
 ```javascript
 service.run(command, args, rawArgv).catch(err => {
@@ -88,7 +88,7 @@ service.run(command, args, rawArgv).catch(err => {
 
 ## new Service()
 
-在上面调用vue-cli-service.js时，会实例化Service类，看看Service内初始化做了些什么
+在上面调用`vue-cli-service.js`时，会实例化`Service`类，看看`Service`内初始化做了些什么。
 
 ```javascript
 class Service {
@@ -155,10 +155,10 @@ class Service {
 
 ```
 
-若用户指定了package.json的路径则直接使用，若自行配置了pkg.vuePlugins.resolveFrom则将该package返回
+若用户指定了`package.json`的路径则直接使用，若自行配置了`pkg.vuePlugins.resolveFrom`则将该`package`返回。
 
 ::: warning 注意
-这里的resolvePkg不是递归调用本身，而是使用了@vue/cli-shared-utils内的resolvePkg
+这里的`resolvePk`g不是递归调用本身，而是使用了`@vue/cli-shared-utils`内的`resolvePkg`。
 :::
 
 ```javascript
@@ -176,11 +176,11 @@ exports.resolvePkg = function (context) {
 }
 ```
 
-**resolvePkg()内vuePlugins配置引用说明(来自vue-cli文档)**
+**`1`resolvePkg()`内`vuePlugins`配置引用说明(来自vue-cli文档)**
 
 ::: tip vuePlugins.resolveFrom
-如果出于一些原因你的插件列在了该项目之外的其它 package.json 文件里，你可以在自己项目的 package.json 里设置
-vuePlugins.resolveFrom 选项指向包含其它 package.json 的文件夹。
+如果出于一些原因你的插件列在了该项目之外的其它 `package.json` 文件里，你可以在自己项目的 `package.jso`n 里设置
+`vuePlugins.resolveFrom` 选项指向包含其它 `package.json` 的文件夹。
 :::
 
 ### resolvePlugins()
@@ -258,8 +258,8 @@ class Service {
 }
 ```
 
-创建一个方法idToPlugin()，该方法可将提供的id转化为plugin，如./commands/serve = { id: 'built-in:command/serve', apply:
-require('./command/serve')}。
+创建一个方法`idToPlugin()`，该方法可将提供的`id`转化为`plugin`，如`./commands/serve = { id: 'built-in:command/serve', apply:
+require('./command/serve')}`。
 
 ```javascript
 const idToPlugin = id => ({
@@ -268,9 +268,9 @@ const idToPlugin = id => ({
 })
 ```
 
-接下来会开始转化vue-cli提供的默认插件builtInPlugins
+接下来会开始转化`vue-cli`提供的默认插件`builtInPlugins`。
 
-在vue-cli-service中，提供的构建指令和对webpack/loader的配置都是以插件注入的形式来声明)
+在`vue-cli-service`中，提供的构建指令和对`webpack/loader`的配置都是以插件注入的形式来声明)。
 
 ```javascript
 const builtInPlugins = [
@@ -286,7 +286,7 @@ const builtInPlugins = [
 ].map(idToPlugin)
 ```
 
-然后判断是否配置了inlinePlugins，inlinePlugins为构造函数内的参数: plugins
+然后判断是否配置了`inlinePlugins`，`inlinePlugins`为构造函数内的参数: `plugins`。
 
 ```javascript
 if (inlinePlugins) {
@@ -320,19 +320,19 @@ if (inlinePlugins) {
 }
 ```
 
-1. 若配置了inlinePlugins并且未配置useBuiltIn为false时则合并inlinePlugins和默认插件builtInPlugins。
+1. 若配置了`inlinePlugins`并且未配置`useBuiltIn`为`false`时则合并`inlinePlugins`和默认插件`builtInPlugins`。
 
-2. 若配置了inlinePlugins但配置了useBuiltIn为false时则只使用inlinePlugins
+2. 若配置了`inlinePlugins`但配置了`useBuiltIn`为`false`时则只使用`inlinePlugins`。
 
 ::: tip useBuiltIn
-当使用 Vue CLI 来构建一个库或是 Web Component 时，推荐给 @vue/babel-preset-app 传入 useBuiltIns: false
-选项。这能够确保你的库或是组件不包含不必要的 polyfills。通常来说，打包 polyfills 应当是最终使用你的库的应用的责任。
+当使用 `Vue CLI` 来构建一个库或是 `Web Component` 时，推荐给 `@vue/babel-preset-app` 传入 `useBuiltIns: false`
+选项。这能够确保你的库或是组件不包含不必要的 `polyfills`。通常来说，打包 `polyfills` 应当是最终使用你的库的应用的责任。
 :::
 
-当未配置inlinePlugins时则合并devDependencies和dependencies内符合vue-cli插件(vue-cli-plugin-xxx)
-命名的插件，若插件名存在于optionalDependencies中则不使用idToPlugin转化
+当未配置`inlinePlugins`时则合并`devDependencies`和`dependencies`内符合`vue-cli`插件`(vue-cli-plugin-xxx)`
+命名的插件，若插件名存在于`optionalDependencies`中则不使用`idToPlugin`转化。
 
-最后会查找有无在vuePlugins中定义service属性并合并
+最后会查找有无在`vuePlugins`中定义`service`属性并合并。
 
 ```javascript
 if (this.pkg.vuePlugins && this.pkg.vuePlugins.service) {
@@ -349,12 +349,12 @@ if (this.pkg.vuePlugins && this.pkg.vuePlugins.service) {
 ```
 
 ::: tip vuePlugins.service
-如果你需要在项目里直接访问插件 API 而不需要创建一个完整的插件，你可以在 package.json 文件中使用 vuePlugins.service 选项：
+如果你需要在项目里直接访问插件 `API` 而不需要创建一个完整的插件，你可以在 `package.json` 文件中使用 `vuePlugins.service` 选项。
 :::
 
 ## service.run()
 
-在vue-cli-service内初始化实例化Service类后，会在初始化一些配置后开始启动服务
+在`vue-cli-service`内初始化实例化`Service`类后，会在初始化一些配置后开始启动服务。
 
 ```javascript
 class Service {
@@ -391,7 +391,7 @@ class Service {
 }
 ```
 
-首先先获取构建模式，这里会从几个方式去获取构建模式
+首先先获取构建模式，这里会从几个方式去获取构建模式。
 
 ```javascript
 const mode = args.mode || (name === 'build' && args.watch ? 'development' : this.modes[name])
@@ -399,14 +399,14 @@ const mode = args.mode || (name === 'build' && args.watch ? 'development' : this
 
 ::: info mode
 
-* 内联传递 即 --mode development/production
-* 属于build模式下但是开启了watch 则指定为development
-* 从初始化的默认构建模式配置中(即this.modes)获取
+* 内联传递 即 `--mode development/production`。
+* 属于`build`模式下但是开启了`watch`则指定为`development`。
+* 从初始化的默认构建模式配置中(即`this.modes`)获取。
   :::
 
-然后配置不需要在初始化前就被调用的插件，之后开始初始化配置选项setPluginsToSkip()
+然后配置不需要在初始化前就被调用的插件，之后开始初始化配置选项`setPluginsToSkip()`。
 
-初始化完毕后commands内部就已经配置好了对应的指令服务，最后根据指令启动对应的服务，下面是记录初始化配置选项的过程
+初始化完毕后`commands`内部就已经配置好了对应的指令服务，最后根据指令启动对应的服务，下面是记录初始化配置选项的过程。
 
 ## service.init()
 
@@ -456,10 +456,10 @@ class Service {
 }
 ```
 
-这个方法内主要是读取env环境变量和读取vue.config.js，并调用所有插件，合并webpack配置。
+这个方法内主要是读取`env`环境变量和读取`vue.config.js`，并调用所有插件，合并`webpack`配置。
 
 ::: tip loadEnv()
-其中会调用两次loadEnv()是为了加载指定模式的环境变量和通用的环境变量文件
+其中会调用两次`loadEnv()`是为了加载指定模式的环境变量和通用的环境变量文件。
 
 ```shell
 .env                # 在所有的环境中被载入
@@ -526,15 +526,15 @@ class Service {
 }
 ```
 
-首先根据项目路径(this.context)拼接.env字符串储存在basePath中，在basePath的基础上再额外拼接.local储存在localPath中
+首先根据项目路径(`this.context`)拼接`.env`字符串储存在`basePath`中，在`basePath`的基础上再额外拼接`.local`储存在`localPath`中。
 
 ```javascript
 const basePath = path.resolve(this.context, `.env${mode ? `.${mode}` : ``}`)
 const localPath = `${basePath}.local`
 ```
 
-然后分别使用dotenv和dotenv-expand库加载到process中，最后根据条件决定是否设置NODE_ENV/BABEL_ENV，所以一般环境变量配置文件不需要额外配置NODE_ENV/BABEL_ENV，
-vue-cli-service会自动配置一个默认项。
+然后分别使用`dotenv`和`dotenv-expand`库加载到`process`中，最后根据条件决定是否设置`NODE_ENV/BABEL_ENV`，所以一般环境变量配置文件不需要额外配置`NODE_ENV/BABEL_ENV`，
+`vue-cli-service`会自动配置一个默认项。
 
 ```javascript
  if (mode) {
@@ -561,7 +561,7 @@ vue-cli-service会自动配置一个默认项。
 
 ## service.loadUserOptions()
 
-本方法用于读取用户配置的vue.config文件或在package.json内配置的"vue"字段并验证配置的正确性
+本方法用于读取用户配置的`vue.config`文件或在`package.json`内配置的`"vue"`字段并验证配置的正确性。
 
 ```javascript
 class Service {
@@ -678,14 +678,14 @@ class Service {
 }
 ```
 
-定义常量esm获取用户是否在package.json内定义type为module，也就是es module模式
+定义常量`esm`获取用户是否在`package.json`内定义`type为module`，也就是`es module`模式。
 
 ```javascript
 const esm = this.pkg.type && this.pkg.type === 'module'
 ```
 
-随后定义了一个可能存在的配置文件路径数组，这里严格限定了文件类型，只支持vue.config.(js/cjs)，
-接下来开始寻找vue.config.(js/cjs)配置文件，若路径正确并且存在此文件则跳出循环
+随后定义了一个可能存在的配置文件路径数组，这里严格限定了文件类型，只支持`vue.config.(js/cjs)`，
+接下来开始寻找`vue.config.(js/cjs)`配置文件，若路径正确并且存在此文件则跳出循环。
 
 ```javascript
  const possibleConfigPaths = [
@@ -713,11 +713,11 @@ if (esm && fileConfigPath === './vue.config.js') {
 ```
 
 ::: warning
-由于vue.config.js仅支持commonjs规范，若用户配置了package.json为es module模式时并且后缀名为.js,
-需要更改vue.config.js后缀名为.cjs 声明该文件是一个commonjs模块
+由于`vue.config.js`仅支持`commonjs`规范，若用户配置了`package.json`为`es module`模式时并且后缀名为`.js`,
+需要更改`vue.config.js`后缀名为`.cjs `声明该文件是一个`commonjs`模块。
 :::
 
-接下来尝试读取vue.config，有两种形式可使用，若为函数类型则获取它的返回结果，当读取模块失败时，代表模块未正确导出，提醒用户注意文件的导出形式
+接下来尝试读取`vue.config`，有两种形式可使用，若为函数类型则获取它的返回结果，当读取模块失败时，代表模块未正确导出，提醒用户注意文件的导出形式。
 
 ```javascript
 try {
@@ -761,9 +761,9 @@ module.exports = function () {
 
 :::
 
-除了配置vue.config文件以外还可以在package.json内配置字段"vue"来代替vue.config文件。**导出格式必须为对象**，否则提示错误
+除了配置`vue.config`文件以外还可以在`package.json`内配置字段`"vue"`来代替`vue.config`文件。**导出格式必须为对象**，否则提示错误。
 
-若同时存在vue.config配置文件和在package.json中配置了vue字段则优先使用配置文件，并抛出警告用户移除package.json内的vue字段
+若同时存在`vue.config`配置文件和在`package.json`中配置了`vue`字段则优先使用配置文件，并抛出警告用户移除`package.json`内的`vue`字段。
 
 ```javascript
 // package.vue
@@ -798,7 +798,7 @@ if (fileConfig) {
 }
 ```
 
-由于vue-cli v3和v4有css相关的api弃用，因此会加一层判断，具体可查阅vue-cli文档
+由于`vue-cli v3`和`v4`有`css`相关的`api`弃用，因此会加一层判断，具体可查阅`vue-cli`文档。
 
 ```javascript
  if (resolved.css && typeof resolved.css.modules !== 'undefined') {
@@ -817,7 +817,7 @@ if (fileConfig) {
 }
 ```
 
-接下来会对配置项publicPath/outputDir做一些字符替换
+接下来会对配置项`publicPath/outputDir`做一些字符替换。
 
 ```javascript
 // 为传递的publicPath的路径结尾拼接'/'，如/root => /root/
@@ -830,7 +830,7 @@ if (typeof resolved.publicPath === 'string') {
 removeSlash(resolved, 'outputDir')
 ```
 
-最后使用@hapi/joi.js库对用户配置的文件进行验证，验证规则如下
+最后使用`@hapi/joi.js`库对用户配置的文件进行验证，验证规则如下。
 
 ::: info cli-service/lib/options.js
 
@@ -905,7 +905,7 @@ const schema = createSchema(joi => joi.object({
 
 ## service.resolveWebpackConfig()
 
-本方法用于解析并合并用户配置的webpack相关配置
+本方法用于解析并合并用户配置的`webpack`相关配置。
 
 ```javascript
 class Service {
@@ -985,8 +985,8 @@ class Service {
 }
 ```
 
-参数chainableConfig默认值是使用方法resolveChainableWebpackConfig，而resolveChainableWebpackConfig的作用是使用webpack-chain初始化链式配置，
-并作为参数传给chainWebpack属性的每一个配置项，然后返回这个链式配置
+参数`chainableConfig`默认值是使用方法`resolveChainableWebpackConfig`，而`resolveChainableWebpackConfig`的作用是使用`webpack-chain`初始化链式配置，
+并作为参数传给`chainWebpack`属性的每一个配置项，然后返回这个链式配置。
 
 ```javascript
 resolveChainableWebpackConfig()
@@ -998,7 +998,7 @@ resolveChainableWebpackConfig()
 }
 ```
 
-调用时，会检查Service类有无初始化完毕
+调用时，会检查`Service`类有无初始化完毕。
 
 ```javascript
 if (!this.initialized) {
@@ -1006,14 +1006,14 @@ if (!this.initialized) {
 }
 ```
 
-随后获取webpack-chain的最终配置结果
+随后获取`webpack-chain`的最终配置结果。
 
 ```javascript
 let config = chainableConfig.toConfig()
 const original = config
 ```
 
-configureWebpack支持两种配置方式，一种是使用对象形式，一种是使用函数，但是需要有返回值，最后会被合并
+`configureWebpack`支持两种配置方式，一种是使用对象形式，一种是使用函数，但是需要有返回值，最后会被合并。
 
 ::: tip configureWebpack
 如果这个值是一个函数，则会接收被解析的配置作为参数。该函数既可以修改配置并不返回任何东西，也可以返回一个被克隆或合并过的配置版本。
@@ -1032,8 +1032,8 @@ this.webpackRawConfigFns.forEach(fn => {
 })
 ```
 
-接下来会检查用户有无在configureWebpack或chainWebpack中定义了output.publicPath属性，由于vue-cli需要在其他地方使用到publicPath属性，
-因此必须publicPath属性必须配置在vue.config文件内
+接下来会检查用户有无在`configureWebpack`或`chainWebpack`中定义了`output.publicPath`属性，由于`vue-cli`需要在其他地方使用到`publicPath`属性，
+因此必须`publicPath`属性必须配置在`vue.config`文件内。
 
 ```javascript
  const target = process.env.VUE_CLI_BUILD_TARGET
@@ -1049,7 +1049,7 @@ if (
 }
 ```
 
-然后根据条件格式化entry选项，最终保存到VUE_CLI_ENTRY_FILES中
+然后根据条件格式化`entry`选项，最终保存到`VUE_CLI_ENTRY_FILES`中。
 
 ::: tip entry支持的格式
 
