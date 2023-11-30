@@ -32,7 +32,7 @@ const service = new Service(process.env.VUE_CLI_CONTEXT || process.cwd())
 const rawArgv = process.argv.slice(2)
 ```
 
-使用`minimist.js`库为命令所传递的参数做匹配，若参数为`boolean`内的元素则匹配结果对应为 参数名：`true`，这样可以告知开启了哪些额外选项。
+使用`minimist.js`库为命令所传递的参数做匹配，这里将`boolean`属性的数组内的所有元素在作为参数时均作为布尔值。
 
 ```javascript
 const args = require('minimist')(rawArgv, {
