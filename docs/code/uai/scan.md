@@ -26,15 +26,14 @@ async function scanDirs() {
 }
 ```
 
-若指定了动态依赖的路径则会调用来自`createUnimport()`内提供的`modifyDynamicImports`方法。
+若传递了`dirs`属性则会调用来自`createUnimport()`内提供的`modifyDynamicImports`方法。
 
-在`scanDirExports`完成后将其所有的成员都添加了属性`__source`并赋值`dir`最后返回`modifyDefaultExportsAlias`的执行结果，这里入参会对`imports`进行过滤，
+在`modifyDynamicImports`的`callback`内，在`scanDirExports`完成后将得到的`exports_`都添加了属性`__source`并打上标记`dir`，最后返回来自`modifyDefaultExportsAlias`的执行结果，这里入参会对`imports`进行过滤，
 目的是为了过滤之前已经扫描过的文件。
 
-在`callback`内调用并储存`scanDirExports`的返回值，其中传入了自定义的文件过滤规则
-
-
 最后创建将配置文件输出。
+
+接下来进入`modifyDynamicImports`。
 
 ### modifyDynamicImports()
 
@@ -48,7 +47,7 @@ async function modifyDynamicImports (fn: (imports: Import[]) => Thenable<void | 
 }
 ```
 
-函数内会储存来自`callback`的返回值，若有值则储存在`dynamicImports`内，然后重置`_combinedImports`属性也就是调用`invalidate()`，接下来回到上面定义的`callback`内。
+储存了来自`fn`的返回值，也就是上门`modifyDefaultExportsAlias`的返回值，若有值则储存在`dynamicImports`内，然后重置`_combinedImports`属性（`invalidate`的内部将`_combinedImports = undefined`），接下来回到上面定义的`fn`内。
 
 ### scanDirExports()
 
@@ -74,12 +73,13 @@ export async function scanFilesFromDir (dir: string | string[], options?: ScanDi
   const result = await Promise.all(
     // Do multiple glob searches to persist the order of input dirs
     dirs.map(async i => await fg(
+      // 扫描的路径
       [i, ...filePatterns.map(p => join(i, p))],
       {
-        absolute: true,
-        cwd: options?.cwd || process.cwd(),
-        onlyFiles: true,
-        followSymbolicLinks: true
+        absolute: true, // 以绝对路径返回
+        cwd: options?.cwd || process.cwd(), // 当前工作路径
+        onlyFiles: true, // 只会返回扫描的文件，忽略文件夹
+        followSymbolicLinks: true // 这个配置不是很清楚作用 :(
       })
       .then(r => r
         .map(f => normalize(f))
@@ -93,21 +93,21 @@ export async function scanFilesFromDir (dir: string | string[], options?: ScanDi
 ```
 
 在`scanFilesFromDir`内，将`dir`统一转化为数组并将其路径**规范化**，定义变量`fileFilter`储存是否传入了`fileFilter`选项，
-定义变量`filePatterns`储存是否传入了自定义规则，在**callback**中传入了`['*.{tsx,jsx,ts,js,mjs,cjs,mts,cts}']`。
+定义变量`filePatterns`储存是否传入了自定义规则，在上面传入的**callback**中传入了`['*.{tsx,jsx,ts,js,mjs,cjs,mts,cts}']`，这里和原本的区别就是增加了`jsx`和`tsx`的支持。
 
 接下来使用`fast-glob`来扫描`dir`下的所有文件，得到返回值后会进行**路径规范化、排序、去重、扁平化、过滤**后返回。
 
-此时得到的数据应为：
+在`vite-react`中的`dirs`配置为`dirs: ['src/layouts', 'src/views']`，那么此时得到的应为：
 
 ```
 [
-  'D:/WebstormProjects/unplugin-auto-import/examples/vite-react/src/layouts/MainLayout.tsx',
-  'D:/WebstormProjects/unplugin-auto-import/examples/vite-react/src/views/PageA.tsx',
-  'D:/WebstormProjects/unplugin-auto-import/examples/vite-react/src/views/PageB.tsx'
+  'your-dir-name/unplugin-auto-import/examples/vite-react/src/layouts/MainLayout.tsx',
+  'your-dir-name/unplugin-auto-import/examples/vite-react/src/views/PageA.tsx',
+  'your-dir-name/unplugin-auto-import/examples/vite-react/src/views/PageB.tsx'
 ]
 ```
 
-接下来来看一下`scanExports`内。
+在这里完成了`dirs`内提供的所有文件的路径扫描，接下来来看一下`scanExports`内。
 
 ### scanExports()
 
@@ -181,10 +181,10 @@ export async function scanExports (filepath: string, seen = new Set<string>()): 
 }
 ```
 
-在`scanExports`中，内部定义了一个`new Set()`，用于缓存并防止重复出现的文件路径，
+在`scanExports`中，内部定义了一个`new Set()`，用于缓存重复出现的文件路径，
 接下来开始使用`readFile`读取其文件内容并使用`mlly`这个库中的`findExports`方法分析其静态导出关系。
 
-在example中能得到的数据是：
+在`example`中能得到的数据是：
 
 ```
   {
@@ -241,15 +241,11 @@ function modifyDefaultExportsAlias(imports: ImportExtended[], options: Options):
 }
 ```
 
-这个函数的作用时是否需要将文件名而不是从`findExports`内得到的`name`作为`as`属性值。
+这个函数的作用是根据选项`defaultExportByFilename`判断是否需要将文件名作为默认导出的名称。
 
 比如新增一个`Index.tsx`，**导入**并**默认导出**`MainLayout.tsx`，当配置了`defaultExportByFilename`时，这里的`as`将使用`Index`，反之为`MainLayout`。
 
-至此，扫描文件的操作就完成了，接下来将会输出配置文件。
-
-## 输出配置文件
-
-分析静态依赖会在此进行，待完成后再统一输出
+至此，`dirs`内的动态依赖分析关系完成，接下来进入`writeConfigFilesThrottled`。
 
 ### writeConfigFiles()
 

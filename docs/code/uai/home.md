@@ -5,7 +5,7 @@
 本篇以`examples`目录下的`vite-react`项目为例。
 
 ## 起步
-入口文件位于`src/core.unplugin.ts`
+入口文件位于`src/core/unplugin.ts`
 
 ```typescript
 export default createUnplugin<Options>((options) => {
@@ -41,7 +41,7 @@ export default createUnplugin<Options>((options) => {
 })
 ```
 
-文件内默认导出了由`createUnplugin`创建的统一打包框架的插件，先是调用了`createContext`创建了插件的上下文后返回了插件的生命周期对应执行的逻辑。
+文件内默认导出了`unplugin`内的`createUnplugin`创建的统一`bundle`框架的插件，先是调用了`createContext`创建了插件的上下文后返回了插件的生命周期对应执行的逻辑。
 
 
 ## createContext
@@ -106,18 +106,18 @@ ${dts}`.trim()}\n`
 函数内对插件传入的几个配置项参数进行初始化，其他则是一些方法的声明，直接看可能不知道是什么意思，直到调用时再看就明白了。
 
 1. 是否需要生成`dts`文件，默认值会使用`local-pkg`这个库中的`isPackageExists`来判断是否有`typescript`这个依赖。
-2. 将传入的动态依赖的路径进行完整化，将动态路径和项目路径拼接。
+2. 将需要解析的每一个定义的路径进行完整拼接储存在`dirs`中。
 3. 定义`eslintrc`相关配置，涉及是否生成`json`文件，生成的路径，文件内每个依赖的值。
-4. 对传入的`resolver`项进行扁平化处理。
-5. 定义`import`注入的顺序，默认为注入到其它`import`的顶部。
+4. 对传入的`resolver`项进行数组扁平化处理。
+5. 定义`import`注入的顺序，默认为注入到其它`import`的尾部。
 
 ---
 
 **分析自动导入的依赖关系**的第一步是**分析其导出关系**，所以先从**分析导出关系**开始。
 
-本插件在`buildStart`和`handleHotUpdate`以及`configResolved`都会对目录进行扫描，后两者是vite专属的一个Hooks。
+插件在`buildStart`和`handleHotUpdate`以及`configResolved`都会对目录进行扫描，后两者是`vite`专属的一个`Hooks`。
 
-根据vite文档得知，这个Hook用于解析vite的整个配置，因此`configResolved`将是**第一个**被调用用于分析的方法。
+根据`vite`文档得知，这个`Hook`用于解析`vite`的整个配置，因此`configResolved`将是**第一个**被调用用于分析的方法。
 
 ### configResolved()
 

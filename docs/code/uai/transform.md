@@ -165,7 +165,7 @@ async function detectImports (code: string | MagicString, ctx: UnimportContext, 
 }
 ```
 
-使用`stripCommentsAndStrings`对代码串进行删除注释、删除引号内的内容、替换正则表达式。
+使用`stripCommentsAndStrings`对代码串进行删除注释、引号内的内容等操作（使用了`strip-literal`这个库，目的应该是为了不会干扰对文件内使用到的依赖进行分析）。
 
 ```typescript
 import React from 'react'
@@ -173,11 +173,11 @@ import React from 'react'
 import React from ''
 ```
 
-使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型，接下来使用`matchRE`内定义的正则表达式进行全局匹配。
+使用`mlly`内的`detectSyntax`方法可获得代码串的模块类型。
 
-第一`if`中根据注释的意思大概是匹配对象的`.`访问的形式，第二个`if`则是以`:`为结尾但不是处于`case:`和`三元表达式`下。
+接下来将`strippedCode`使用`matchRE`内定义的正则进行全局匹配并记录所有匹配到的代码的位置。
 
-接下来将定义好的的`excludeRE`内的正则表达式并根据这些匹配规则(`import|export`、`function xxx()`、`class xxx`、`const|let|var xxx`)对`occurrenceMap`内储存的项进行移除，其目的是移除已定义的依赖。
+随后将定义好的的`excludeRE`内的正则根据这些匹配规则对`occurrenceMap`内储存的项进行移除，这些不需要加入依赖分析。
 
 ```typescript
 const excludeRE = [
