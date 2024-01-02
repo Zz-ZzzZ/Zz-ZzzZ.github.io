@@ -1,6 +1,6 @@
 # vue-cli-service serve
 
-接下来阅读一下`vue-cli-service`中的`serve`指令。
+接下来阅读一下`vue-cli-service`中的`serve`指令，也是内部对于`webpack-server`的进一步封装。
 
 ## 注册指令到Service类
 

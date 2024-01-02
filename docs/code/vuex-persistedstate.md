@@ -1,6 +1,6 @@
-# vuex-persistedstate 源码阅读
+# vuex-persistedstate 源码阅读笔记
 
-### 一个持久化缓存store数据的vuex插件
+一个持久化缓存store数据的vuex插件，可以了解Vuex的插件开发。
 
 ---
 

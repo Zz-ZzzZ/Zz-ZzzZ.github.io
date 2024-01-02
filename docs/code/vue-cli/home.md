@@ -2,6 +2,8 @@
 
 一直对`vue-cli-service`如何启动比较感兴趣，因此对着官方文档和`debug`尝试阅读一下(**version: vue-cli v4**)。
 
+可以学习到命令行参数的获取与使用和内部对于`webpack`配置的合并。
+
 ## vue-cli-service.js
 
 使用`semver.js`库来匹配当前操作系统的`node`版本是否大于`vue-cli-service`所要求的最低`node`版本（最低为**node v8**）。

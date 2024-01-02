@@ -2,6 +2,8 @@
 
 这个库是在使用`cube-ui`时注意到的，一般用于C端创建`modal`/`dialog`会很方便[https://didi.github.io/cube-ui/#/zh-CN/docs/create-api]
 
+有助于理解函数式组件调用的实现思路。
+
 ### 添加 vue-create-api
 
 从入口文件`src/index.js`内进入，`vue-create-api`是一个`Vue`插件，因此需要提供一个`install`的方法来挂载。
