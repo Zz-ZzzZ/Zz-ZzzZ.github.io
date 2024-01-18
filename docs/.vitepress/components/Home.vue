@@ -21,6 +21,10 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
 .home .vp-doc a {
   color: var(--vp-c-text-light-2);
   text-decoration: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  -webkit-user-select: none;
+  -moz-user-focus: none;
+  -moz-user-select: none;
 }
 
 .home .vp-doc ul p {
