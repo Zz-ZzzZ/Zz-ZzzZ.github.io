@@ -20,6 +20,7 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
 
 .home .vp-doc a {
   color: var(--vp-c-text-light-2);
+  text-decoration: none;
 }
 
 .home .vp-doc ul p {
