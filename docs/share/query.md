@@ -20,7 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 ```
 
-实例化`QueryClient`类，并使用`QueryClientProvider`组件注入后，所有子组件就可以通过`useQueryClient`来进行跨组件操作。
+实例化`QueryClient`类，此处可传递全局配置。
+
+使用`QueryClientProvider`组件注入后，所有子组件就可以通过`useQueryClient`来进行跨组件操作。
 
 ### useQuery
 
