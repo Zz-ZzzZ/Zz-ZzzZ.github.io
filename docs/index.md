@@ -8,17 +8,19 @@
 
 ### 分享 🌟
 
-- [Vue-i18n实践分享(基于Vue2的多语言文件自动导入和类型推导) --- 2022/05](/share/i18n.html)
+- [Vue-i18n实践分享(基于Vue2的多语言文件自动导入和类型推导) --- 2022/05](/share/i18n.md)
 
-- [inheritAttrs属性 --- 2022/08](/share/inheritAttrs.html)
+- [inheritAttrs属性 --- 2022/08](/share/inheritAttrs.md)
 
-- [Vue中快速定义Props属性的函数封装 --- 2022/08](/share/props.html)
+- [Vue中快速定义Props属性的函数封装 --- 2022/08](/share/props.md)
 
-- [在JavaScript中实现style的CanIUse --- 2022/08](/share/canIUseStyle.html)
+- [在JavaScript中实现style的CanIUse --- 2022/08](/share/canIUseStyle.md)
 
-- [在不使用Event Bus来实现深层组件嵌套事件通信 --- 2023/08](/share/event.html)
+- [在不使用Event Bus来实现深层组件嵌套事件通信 --- 2023/08](/share/event.md)
 
-- [TanStack Query 入门食用指南 --- 2024/01](/share/query.html)
+- [TanStack Query 入门食用指南 --- 2024/01](/share/query.md)
+
+- [处理浏览器复制文本的兼容方法 --- 2024/02](/share/copy.md)
 
 ### 踩坑 🧐
 
