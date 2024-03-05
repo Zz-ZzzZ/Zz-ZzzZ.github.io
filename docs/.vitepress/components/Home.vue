@@ -43,4 +43,10 @@ import 'vitepress/dist/client/theme-default/styles/components/vp-doc.css'
     padding: 7px 14px;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .home .vp-doc ul p {
+    background: transparent;
+  }
+}
 </style>
