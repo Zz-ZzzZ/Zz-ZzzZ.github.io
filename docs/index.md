@@ -40,6 +40,8 @@
 
 - [el-date-picker使用方式踩坑 --- 2023/04](/bug/el-date-picker.md)
 
+- [Angular/FormGroup定义数组时的用法 --- 2024/08](/bug/formGroup.md)
+
 ### 笔记 ✍️
 
 - [vuex-persistedstate 源码阅读笔记 --- 2022/09](/code/vuex-persistedstate.md)
@@ -61,4 +63,3 @@
 - [unplugin-vue-import源码阅读笔记(transform) --- 2023/06](/code/uai/transform.md)
 
 - [vue-create-api源码阅读笔记 --- 2023/09](/code/vca.md)
-
